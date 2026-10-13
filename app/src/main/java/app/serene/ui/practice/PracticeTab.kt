@@ -124,7 +124,7 @@ fun PracticeTab(settings: Settings, go: Go) {
                     ) {
                         Box(Modifier.size(64.dp).clip(U.RSm), contentAlignment = Alignment.Center) {
                             SceneBackdrop(Scene.NIGHT, animate = false)
-                            Text(p.rhythm(), color = Color.White, style = UType.Small.copy(color = Color.White))
+                            Text(p.rhythm(), style = UType.Small.copy(color = Color.White), modifier = Modifier.clip(androidx.compose.foundation.shape.CircleShape).background(Color(0xE6141230)).padding(horizontal = 7.dp, vertical = 3.dp))
                         }
                         Spacer(Modifier.width(14.dp))
                         Column(Modifier.weight(1f)) {

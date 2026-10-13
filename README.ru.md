@@ -15,7 +15,9 @@
 ![Languages](https://img.shields.io/badge/lang-EN%20%7C%20RU-E39A7B)
 [![License: MIT](https://img.shields.io/badge/license-MIT-ECE8FB)](LICENSE)
 
-[English](README.md) · **Русский**
+[English](README.md) · **Русский** · [Сайт](https://bigdevwhale.github.io/stillcraft/apps/serene/)
+
+<img src="docs/screenshots/overview.ru.png" alt="Serene на телефоне: экран «Сегодня» с аффирмацией дня, визуализация на берегу океана, темы аффирмаций и дневник" width="100%" />
 
 </div>
 

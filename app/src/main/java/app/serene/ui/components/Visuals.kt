@@ -95,11 +95,12 @@ fun PracticeCalendar(byDay: Map<LocalDate, Int>, today: LocalDate, modifier: Mod
         val rows = 5
         val gap = 5f * density
         val cell = minOf((size.width - gap * (cols - 1)) / cols, (size.height - gap * (rows - 1)) / rows)
+        val left = (size.width - (cell * cols + gap * (cols - 1))) / 2
         val start = today.minusDays((today.dayOfWeek.value - 1 + 7L * (rows - 1)).toLong())
         for (i in 0 until cols * rows) {
             val d = start.plusDays(i.toLong())
             if (d.isAfter(today)) break
-            val x = (i % cols) * (cell + gap)
+            val x = left + (i % cols) * (cell + gap)
             val y = (i / cols) * (cell + gap)
             val s = byDay[d] ?: 0
             val k = if (s == 0) 0f else (0.3f + 0.7f * (s / 1200f).coerceAtMost(1f))

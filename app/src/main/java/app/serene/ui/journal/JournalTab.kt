@@ -102,7 +102,7 @@ fun JournalTab(settings: Settings, go: Go) {
 
             SectionTitle(stringResource(R.string.practice_calendar))
             UCard {
-                PracticeCalendar(stats.byDay, today, Modifier.fillMaxWidth().aspectRatio(7f / 5f))
+                PracticeCalendar(stats.byDay, today, Modifier.fillMaxWidth().height(170.dp))
             }
 
             SectionTitle(stringResource(R.string.balance_title))

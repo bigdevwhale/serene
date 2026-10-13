@@ -164,10 +164,10 @@ fun BreathScreen(id: String, settings: Settings, onClose: () -> Unit) {
                         Orb(scale.value, Modifier.size(320.dp))
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             AnimatedContent(phase, transitionSpec = { fadeIn(tween(400)) togetherWith fadeOut(tween(300)) }, label = "phase") {
-                                Text(phaseLabel(it), style = TextStyle(fontFamily = Lora, fontSize = 30.sp, color = Color.White))
+                                Text(phaseLabel(it), style = TextStyle(fontFamily = Lora, fontSize = 30.sp, color = Color.White, shadow = androidx.compose.ui.graphics.Shadow(Color(0x804A3A9E), androidx.compose.ui.geometry.Offset(0f, 2f), 14f)))
                             }
                             Spacer(Modifier.height(4.dp))
-                            Text(left.toString(), color = Color.White.copy(alpha = 0.8f), fontFamily = Inter, fontSize = 20.sp, fontWeight = FontWeight.Medium)
+                            Text(left.toString(), style = TextStyle(color = Color.White.copy(alpha = 0.9f), fontFamily = Inter, fontSize = 20.sp, fontWeight = FontWeight.Medium, shadow = androidx.compose.ui.graphics.Shadow(Color(0x804A3A9E), androidx.compose.ui.geometry.Offset(0f, 2f), 14f)))
                         }
                     }
                 }

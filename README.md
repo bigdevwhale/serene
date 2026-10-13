@@ -15,7 +15,9 @@
 ![Languages](https://img.shields.io/badge/lang-EN%20%7C%20RU-E39A7B)
 [![License: MIT](https://img.shields.io/badge/license-MIT-ECE8FB)](LICENSE)
 
-**English** · [Русский](README.ru.md)
+**English** · [Русский](README.ru.md) · [Website](https://bigdevwhale.github.io/stillcraft/apps/serene/)
+
+<img src="docs/screenshots/overview.png" alt="Serene on a phone: today with the affirmation of the day, a guided visualization by the ocean, affirmation themes and the journal" width="100%" />
 
 </div>
 
