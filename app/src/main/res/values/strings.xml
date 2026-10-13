@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Serene</string>
+
+    <!-- Common -->
+    <string name="back">Back</string>
+    <string name="close">Close</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="add">Add</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="begin">Begin</string>
+    <string name="pause">Pause</string>
+    <string name="resume">Resume</string>
+    <string name="finish">Done</string>
+    <string name="off">Off</string>
+    <string name="share">Share</string>
+    <string name="favorite">Favourite</string>
+    <string name="listen">Listen</string>
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="settings">Settings</string>
+
+    <plurals name="minutes">
+        <item quantity="one">%d min</item>
+        <item quantity="other">%d min</item>
+    </plurals>
+    <plurals name="days_n">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <plurals name="streak">
+        <item quantity="one">%d mindful day in a row</item>
+        <item quantity="other">%d mindful days in a row</item>
+    </plurals>
+    <plurals name="affirmations">
+        <item quantity="one">%d affirmation</item>
+        <item quantity="other">%d affirmations</item>
+    </plurals>
+
+    <!-- Tabs -->
+    <string name="tab_today">Today</string>
+    <string name="tab_practice">Practice</string>
+    <string name="tab_affirm">Affirmations</string>
+    <string name="tab_journal">Journal</string>
+
+    <!-- Today -->
+    <string name="greet_morning">Good morning</string>
+    <string name="greet_day">Good afternoon</string>
+    <string name="greet_evening">Good evening</string>
+    <string name="greet_night">Good night</string>
+    <string name="affirmation_of_day">Affirmation of the day</string>
+    <string name="how_are_you">How are you feeling?</string>
+    <string name="today_mood">Today you feel: %s</string>
+    <string name="today_mood_more">Add what you\'re grateful for</string>
+    <string name="today_goal">Today\'s practice</string>
+    <string name="goal_left">%d more minutes to your daily goal</string>
+    <string name="goal_done">Daily goal reached. Well done.</string>
+    <string name="streak_none">Any practice today starts a streak</string>
+    <string name="calm_now">Calm now</string>
+    <string name="calm_now_text">A 3-minute reset</string>
+    <string name="breathe">Breathe</string>
+    <string name="breathe_text">Slow, long exhales</string>
+    <string name="for_now">For this moment</string>
+
+    <!-- Practice -->
+    <string name="sec_meditate">Meditate</string>
+    <string name="sec_visualize">Visualize</string>
+    <string name="sec_breathe">Breathe</string>
+    <string name="kind_meditation">Meditation</string>
+    <string name="kind_visualization">Visualization</string>
+    <string name="intro_hint">Find a quiet spot. Headphones help.</string>
+    <string name="voice">Voice</string>
+    <string name="ambience">Background sound</string>
+    <string name="voice_missing">There is no offline voice for this language on your phone yet, so the session will be shown as text. You can install one in the speech settings.</string>
+    <string name="voice_settings">Speech settings</string>
+    <string name="voice_test">Test the voice</string>
+    <string name="voice_sample">Take a slow breath in, and let it go. You are exactly where you need to be.</string>
+    <string name="done_title">Well done</string>
+    <string name="done_text">%d minutes just for you. Carry this calm with you.</string>
+    <string name="timer_title">Silent meditation</string>
+    <string name="timer_text">Just you, a soundscape and a bell.</string>
+    <string name="timer_card">A timer with soft sounds and a bowl</string>
+    <string name="timer_duration">Duration</string>
+    <string name="timer_sound">Sound</string>
+    <string name="timer_interval">Interval bell</string>
+
+    <string name="amb_none">Silence</string>
+    <string name="amb_rain">Rain</string>
+    <string name="amb_ocean">Ocean</string>
+    <string name="amb_stream">Stream</string>
+    <string name="amb_wind">Wind</string>
+    <string name="amb_forest">Forest</string>
+    <string name="amb_fire">Fireplace</string>
+    <string name="amb_drone">Warm tone</string>
+    <string name="amb_brown">Deep noise</string>
+
+    <string name="breath_calm">Calming breath</string>
+    <string name="breath_calm_text">Breathe in for four, out for six. Longer exhales tell the body it is safe to rest.</string>
+    <string name="breath_box">Box breathing</string>
+    <string name="breath_box_text">Four counts in, hold, out, hold. Steady and grounding when the mind races.</string>
+    <string name="breath_relax">4-7-8 relax</string>
+    <string name="breath_relax_text">In for four, hold for seven, out for eight. A classic for falling asleep.</string>
+    <string name="breath_coherent">Coherent breathing</string>
+    <string name="breath_coherent_text">About five breaths a minute, even in and out. Balancing and calm.</string>
+    <string name="breath_sigh">Physiological sigh</string>
+    <string name="breath_sigh_text">Two inhales through the nose, one long sigh out. The fastest way to let tension go.</string>
+    <string name="breath_balance">Equal breathing</string>
+    <string name="breath_balance_text">Four in, four out. Simple, even and centring.</string>
+    <string name="phase_inhale">Breathe in</string>
+    <string name="phase_top_up">A little more</string>
+    <string name="phase_hold">Hold</string>
+    <string name="phase_exhale">Breathe out</string>
+    <string name="phase_rest">Rest</string>
+
+    <!-- Visions -->
+    <string name="visions_title">Vision board</string>
+    <string name="visions_text">Add what you want to bring into your life: a photo, a few words about how it feels, and a line to say to yourself. Then visualize it all in one guided session.</string>
+    <string name="visions_card">%d visions · visualize them now</string>
+    <string name="visions_card_empty">Picture what you want, as if it\'s already true</string>
+    <string name="visualize_now">Visualize my board</string>
+    <string name="vision_add">Add a vision</string>
+    <string name="vision_new">New vision</string>
+    <string name="vision_edit">Edit vision</string>
+    <string name="vision_delete">Delete this vision?</string>
+    <string name="vision_what">What do you want?</string>
+    <string name="vision_what_hint">A calm home by the sea</string>
+    <string name="vision_details">How does it look and feel?</string>
+    <string name="vision_details_text">The voice will read this during the session. Write it in the present tense, with what you see, hear and feel.</string>
+    <string name="vision_details_hint">Morning light in the kitchen, the sound of waves through the open window…</string>
+    <string name="vision_affirmation">A line to say to yourself</string>
+    <string name="vision_affirmation_hint">My home is full of light and peace.</string>
+    <string name="photo_add">Add a photo</string>
+    <string name="photo_change">Change photo</string>
+    <string name="photo_remove">Remove photo</string>
+
+    <!-- Affirmations -->
+    <string name="affirm_sub">Words you repeat become the voice you hear inside.</string>
+    <string name="mix_title">My daily mix</string>
+    <string name="mix_text">Fifteen affirmations from your themes and favourites, read aloud</string>
+    <string name="favorites">Favourites</string>
+    <string name="favorites_empty">Tap the heart on any affirmation to keep it here.</string>
+    <string name="mine">My own</string>
+    <string name="mine_hint">Write affirmations in your own words: in the present tense, about what you want, not what you want to avoid.</string>
+    <string name="mine_placeholder">I am allowed to rest.</string>
+    <string name="themes">Themes</string>
+    <string name="play_all">Play all</string>
+    <string name="autoplay">Autoplay</string>
+    <string name="repeat_hint">Repeat each one after the voice, out loud or silently</string>
+    <string name="focus_toggle">Add to my focus</string>
+    <string name="delete_affirmation">Delete this affirmation?</string>
+
+    <!-- Journal -->
+    <string name="stat_streak">streak</string>
+    <string name="stat_minutes">minutes</string>
+    <string name="stat_sessions">sessions</string>
+    <string name="stat_best">Best streak: %d days</string>
+    <string name="write_gratitude">Write what you\'re grateful for</string>
+    <string name="mood_chart">Mood, last two weeks</string>
+    <string name="mood_chart_empty">Check in for a few days and your mood will show up here.</string>
+    <string name="practice_calendar">Practice, last five weeks</string>
+    <string name="entries">Entries</string>
+    <string name="check_in">Check-in</string>
+    <string name="edit_entry">Entry</string>
+    <string name="gratitude">Gratitude</string>
+    <string name="gratitude_title">Three good things</string>
+    <string name="gratitude_1">One…</string>
+    <string name="gratitude_2">Two…</string>
+    <string name="gratitude_3">Three…</string>
+    <string name="note">Anything else</string>
+    <string name="note_placeholder">What is on your mind?</string>
+    <string name="delete_entry">Delete this entry?</string>
+    <string name="delete_entry_text">It will be gone for good.</string>
+    <string name="mood_1">Heavy</string>
+    <string name="mood_2">Low</string>
+    <string name="mood_3">Okay</string>
+    <string name="mood_4">Good</string>
+    <string name="mood_5">Great</string>
+    <string-array name="gratitude_prompts">
+        <item>What made you smile today, even a little?</item>
+        <item>Who made your day a bit easier?</item>
+        <item>What did your body do well for you today?</item>
+        <item>What small comfort are you glad to have?</item>
+        <item>What went better than you expected?</item>
+        <item>What beautiful thing did you notice today?</item>
+        <item>What are you looking forward to?</item>
+    </string-array>
+
+    <string name="balance_title">Wheel of balance</string>
+    <string name="balance_text">How full does each part of your life feel right now? There are no right answers. Harmony is not ten everywhere, it is knowing where to give a little care.</string>
+    <string name="balance_empty">See where your life feels full and where it asks for care.</string>
+    <string name="balance_check">Check my balance</string>
+    <string name="balance_previous">Outline: %s</string>
+    <string name="area_body">Body</string>
+    <string name="area_mind">Mind</string>
+    <string name="area_people">Relationships</string>
+    <string name="area_work">Work and purpose</string>
+    <string name="area_rest">Rest</string>
+    <string name="area_joy">Joy</string>
+
+    <!-- Onboarding -->
+    <string name="welcome_text">A quiet place for your mind: a few minutes a day for calm, clarity and harmony.</string>
+    <string name="welcome_1">Guided meditations and visualizations, read aloud</string>
+    <string name="welcome_2">Affirmations and your own vision board</string>
+    <string name="welcome_3">Breathing exercises and soft soundscapes</string>
+    <string name="welcome_4">Free, no ads, no account. Everything stays on your phone.</string>
+    <string name="ob_start">Begin</string>
+    <string name="ob_name_title">What should we call you?</string>
+    <string name="ob_name_text">Just for the greeting. You can skip this.</string>
+    <string name="ob_name_hint">Your name</string>
+    <string name="ob_focus_title">What would you like more of?</string>
+    <string name="ob_focus_text">Your affirmation of the day and your daily mix will come from these themes. You can change them any time.</string>
+    <string name="ob_remind_title">Gentle reminders</string>
+    <string name="ob_remind_text">A kind word in the morning and an invitation to unwind at night.</string>
+    <string name="ob_finish">Start</string>
+    <string name="remind_morning">Morning affirmation</string>
+    <string name="remind_morning_text">Start the day with a kind thought</string>
+    <string name="remind_evening">Evening wind-down</string>
+    <string name="remind_evening_text">An invitation to let the day go</string>
+
+    <!-- Settings -->
+    <string name="set_name">Your name</string>
+    <string name="set_voice">Voice</string>
+    <string name="set_voice_on">Read sessions aloud</string>
+    <string name="set_voice_on_text">Uses your phone\'s offline speech engine</string>
+    <string name="set_voice_rate">Speed</string>
+    <string name="rate_slow">Slow</string>
+    <string name="rate_calm">Calm</string>
+    <string name="rate_normal">Normal</string>
+    <string name="set_sound">Sound</string>
+    <string name="set_ambience_volume">Background sound volume</string>
+    <string name="set_bells">Bells and breath cues</string>
+    <string name="set_bells_text">A singing bowl to begin and end, soft tones while breathing</string>
+    <string name="set_haptics">Vibration while breathing</string>
+    <string name="set_haptics_text">A light tap at each change of breath</string>
+    <string name="set_reminders">Reminders</string>
+    <string name="set_goal">Daily goal</string>
+    <string name="set_appearance">Appearance</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="language">Language</string>
+    <string name="lang_system">System</string>
+    <string name="perm_title">Allow notifications</string>
+    <string name="perm_text">Reminders can\'t arrive without permission.</string>
+    <string name="autostart_title">Reminders not arriving?</string>
+    <string name="autostart_text">Some phones (Xiaomi, Huawei, Oppo…) stop apps in the background. Allow autostart and turn off battery restrictions for Serene.</string>
+    <string name="backup">Backup</string>
+    <string name="backup_text">Your journal, favourites, affirmations and visions live only on this phone. Export them to a file to keep them safe. Photos are not included.</string>
+    <string name="backup_export">Export</string>
+    <string name="backup_import">Restore</string>
+    <string name="backup_import_title">Restore from backup?</string>
+    <string name="backup_import_text">Everything in the app now will be replaced with the backup.</string>
+    <string name="backup_done">Backup saved</string>
+    <string name="backup_failed">Something went wrong</string>
+    <string name="backup_restored">Restored</string>
+    <string name="about">About</string>
+    <string name="about_text">Serene is free and open source, with no ads, no account and no tracking. Voices and sounds are made on your phone, so it works offline.</string>
+    <string name="about_version">Version %s</string>
+
+    <!-- Notifications and widget -->
+    <string name="channel_name">Reminders</string>
+    <string name="channel_desc">Morning affirmations and evening wind-down</string>
+    <string name="notif_morning_title">Your affirmation for today</string>
+    <string name="notif_evening_title">Time to unwind</string>
+    <string name="notif_evening_text">Let the day go with a few quiet minutes before sleep.</string>
+    <string name="widget_name">Affirmation of the day</string>
+    <string name="widget_desc">A kind thought for today on your home screen</string>
+    <string name="widget_eyebrow">For today</string>
+</resources>

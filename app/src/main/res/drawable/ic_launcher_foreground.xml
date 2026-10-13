@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- A low sun over still water: the half disc above, its calm reflection below. -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M39,55a15,15 0,0 1,30 0z" />
+    <path
+        android:pathData="M37,61h34M43,67h22M49,73h10"
+        android:strokeWidth="3.4"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round" />
+</vector>

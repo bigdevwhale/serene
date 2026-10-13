@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Common -->
+    <string name="back">Назад</string>
+    <string name="close">Закрыть</string>
+    <string name="cancel">Отмена</string>
+    <string name="save">Сохранить</string>
+    <string name="add">Добавить</string>
+    <string name="edit">Изменить</string>
+    <string name="delete">Удалить</string>
+    <string name="next">Далее</string>
+    <string name="previous">Назад</string>
+    <string name="begin">Начать</string>
+    <string name="pause">Пауза</string>
+    <string name="resume">Продолжить</string>
+    <string name="finish">Готово</string>
+    <string name="off">Выкл.</string>
+    <string name="share">Поделиться</string>
+    <string name="favorite">В избранное</string>
+    <string name="listen">Прослушать</string>
+    <string name="today">Сегодня</string>
+    <string name="yesterday">Вчера</string>
+    <string name="settings">Настройки</string>
+
+    <plurals name="minutes">
+        <item quantity="one">%d мин</item>
+        <item quantity="few">%d мин</item>
+        <item quantity="many">%d мин</item>
+        <item quantity="other">%d мин</item>
+    </plurals>
+    <plurals name="days_n">
+        <item quantity="one">%d день</item>
+        <item quantity="few">%d дня</item>
+        <item quantity="many">%d дней</item>
+        <item quantity="other">%d дня</item>
+    </plurals>
+    <plurals name="streak">
+        <item quantity="one">%d осознанный день подряд</item>
+        <item quantity="few">%d осознанных дня подряд</item>
+        <item quantity="many">%d осознанных дней подряд</item>
+        <item quantity="other">%d осознанного дня подряд</item>
+    </plurals>
+    <plurals name="affirmations">
+        <item quantity="one">%d аффирмация</item>
+        <item quantity="few">%d аффирмации</item>
+        <item quantity="many">%d аффирмаций</item>
+        <item quantity="other">%d аффирмации</item>
+    </plurals>
+
+    <!-- Tabs -->
+    <string name="tab_today">Сегодня</string>
+    <string name="tab_practice">Практики</string>
+    <string name="tab_affirm">Аффирмации</string>
+    <string name="tab_journal">Дневник</string>
+
+    <!-- Today -->
+    <string name="greet_morning">Доброе утро</string>
+    <string name="greet_day">Добрый день</string>
+    <string name="greet_evening">Добрый вечер</string>
+    <string name="greet_night">Доброй ночи</string>
+    <string name="affirmation_of_day">Аффирмация дня</string>
+    <string name="how_are_you">Как вы себя чувствуете?</string>
+    <string name="today_mood">Сегодня: %s</string>
+    <string name="today_mood_more">Запишите, за что вы благодарны</string>
+    <string name="today_goal">Практика сегодня</string>
+    <string name="goal_left">Ещё %d мин до цели дня</string>
+    <string name="goal_done">Цель дня достигнута. Прекрасно.</string>
+    <string name="streak_none">Любая практика сегодня начнёт серию</string>
+    <string name="calm_now">Успокоиться</string>
+    <string name="calm_now_text">Передышка за 3 минуты</string>
+    <string name="breathe">Подышать</string>
+    <string name="breathe_text">Медленные, долгие выдохи</string>
+    <string name="for_now">Для этого момента</string>
+
+    <!-- Practice -->
+    <string name="sec_meditate">Медитации</string>
+    <string name="sec_visualize">Визуализации</string>
+    <string name="sec_breathe">Дыхание</string>
+    <string name="kind_meditation">Медитация</string>
+    <string name="kind_visualization">Визуализация</string>
+    <string name="intro_hint">Найдите тихое место. В наушниках лучше.</string>
+    <string name="voice">Голос</string>
+    <string name="ambience">Фоновый звук</string>
+    <string name="voice_missing">На телефоне пока нет офлайн-голоса для этого языка, поэтому практика будет показана текстом. Голос можно установить в настройках синтеза речи.</string>
+    <string name="voice_settings">Синтез речи</string>
+    <string name="voice_test">Проверить голос</string>
+    <string name="voice_sample">Сделайте медленный вдох и отпустите его. Вы именно там, где нужно.</string>
+    <string name="done_title">Прекрасно</string>
+    <string name="done_text">%d мин только для себя. Возьмите это спокойствие с собой.</string>
+    <string name="timer_title">Медитация в тишине</string>
+    <string name="timer_text">Только вы, звуки природы и колокол.</string>
+    <string name="timer_card">Таймер с мягкими звуками и поющей чашей</string>
+    <string name="timer_duration">Длительность</string>
+    <string name="timer_sound">Звук</string>
+    <string name="timer_interval">Колокол каждые</string>
+
+    <string name="amb_none">Тишина</string>
+    <string name="amb_rain">Дождь</string>
+    <string name="amb_ocean">Океан</string>
+    <string name="amb_stream">Ручей</string>
+    <string name="amb_wind">Ветер</string>
+    <string name="amb_forest">Лес</string>
+    <string name="amb_fire">Камин</string>
+    <string name="amb_drone">Тёплый тон</string>
+    <string name="amb_brown">Глубокий шум</string>
+
+    <string name="breath_calm">Успокаивающее дыхание</string>
+    <string name="breath_calm_text">Вдох на четыре, выдох на шесть. Долгий выдох подсказывает телу, что можно отдохнуть.</string>
+    <string name="breath_box">Квадратное дыхание</string>
+    <string name="breath_box_text">Четыре счёта: вдох, задержка, выдох, задержка. Устойчивость, когда мысли несутся.</string>
+    <string name="breath_relax">Дыхание 4-7-8</string>
+    <string name="breath_relax_text">Вдох на четыре, задержка на семь, выдох на восемь. Классика для засыпания.</string>
+    <string name="breath_coherent">Резонансное дыхание</string>
+    <string name="breath_coherent_text">Около пяти вдохов в минуту, ровно и плавно. Уравновешивает и успокаивает.</string>
+    <string name="breath_sigh">Физиологический вздох</string>
+    <string name="breath_sigh_text">Два вдоха носом и один долгий выдох. Самый быстрый способ отпустить напряжение.</string>
+    <string name="breath_balance">Ровное дыхание</string>
+    <string name="breath_balance_text">Четыре на вдох, четыре на выдох. Просто, ровно, центрирует.</string>
+    <string name="phase_inhale">Вдох</string>
+    <string name="phase_top_up">Ещё немного</string>
+    <string name="phase_hold">Задержка</string>
+    <string name="phase_exhale">Выдох</string>
+    <string name="phase_rest">Пауза</string>
+
+    <!-- Visions -->
+    <string name="visions_title">Доска визуализаций</string>
+    <string name="visions_text">Добавьте то, что хотите привести в свою жизнь: фото, пару слов о том, каково это, и фразу для себя. Потом проживите всё это в одной управляемой визуализации.</string>
+    <string name="visions_card">Визуализаций: %d · проживите их сейчас</string>
+    <string name="visions_card_empty">Представьте желаемое так, словно оно уже сбылось</string>
+    <string name="visualize_now">Визуализировать доску</string>
+    <string name="vision_add">Добавить</string>
+    <string name="vision_new">Новая визуализация</string>
+    <string name="vision_edit">Визуализация</string>
+    <string name="vision_delete">Удалить эту визуализацию?</string>
+    <string name="vision_what">Чего вы хотите?</string>
+    <string name="vision_what_hint">Спокойный дом у моря</string>
+    <string name="vision_details">Как это выглядит и ощущается?</string>
+    <string name="vision_details_text">Голос прочтёт это во время практики. Пишите в настоящем времени: что вы видите, слышите и чувствуете.</string>
+    <string name="vision_details_hint">Утренний свет на кухне, в открытое окно слышно волны…</string>
+    <string name="vision_affirmation">Фраза для себя</string>
+    <string name="vision_affirmation_hint">Мой дом наполнен светом и покоем.</string>
+    <string name="photo_add">Добавить фото</string>
+    <string name="photo_change">Сменить фото</string>
+    <string name="photo_remove">Убрать фото</string>
+
+    <!-- Affirmations -->
+    <string name="affirm_sub">Слова, которые вы повторяете, становятся вашим внутренним голосом.</string>
+    <string name="mix_title">Мой микс дня</string>
+    <string name="mix_text">Пятнадцать аффирмаций из ваших тем и избранного, вслух</string>
+    <string name="favorites">Избранное</string>
+    <string name="favorites_empty">Нажмите на сердечко у любой аффирмации, чтобы сохранить её здесь.</string>
+    <string name="mine">Мои</string>
+    <string name="mine_hint">Пишите аффирмации своими словами: в настоящем времени, о том, чего хотите, а не чего избегаете.</string>
+    <string name="mine_placeholder">Мне можно отдыхать.</string>
+    <string name="themes">Темы</string>
+    <string name="play_all">Слушать все</string>
+    <string name="autoplay">Автовоспроизведение</string>
+    <string name="repeat_hint">Повторяйте за голосом вслух или про себя</string>
+    <string name="focus_toggle">В мой фокус</string>
+    <string name="delete_affirmation">Удалить эту аффирмацию?</string>
+
+    <!-- Journal -->
+    <string name="stat_streak">серия</string>
+    <string name="stat_minutes">минут</string>
+    <string name="stat_sessions">практик</string>
+    <string name="stat_best">Лучшая серия: %d дн.</string>
+    <string name="write_gratitude">Записать благодарности</string>
+    <string name="mood_chart">Настроение за две недели</string>
+    <string name="mood_chart_empty">Отмечайте настроение несколько дней, и здесь появится график.</string>
+    <string name="practice_calendar">Практика за пять недель</string>
+    <string name="entries">Записи</string>
+    <string name="check_in">Как дела</string>
+    <string name="edit_entry">Запись</string>
+    <string name="gratitude">Благодарность</string>
+    <string name="gratitude_title">Три хороших вещи</string>
+    <string name="gratitude_1">Первое…</string>
+    <string name="gratitude_2">Второе…</string>
+    <string name="gratitude_3">Третье…</string>
+    <string name="note">Что-то ещё</string>
+    <string name="note_placeholder">Что у вас на душе?</string>
+    <string name="delete_entry">Удалить запись?</string>
+    <string name="delete_entry_text">Её нельзя будет вернуть.</string>
+    <string name="mood_1">Тяжело</string>
+    <string name="mood_2">Грустно</string>
+    <string name="mood_3">Нормально</string>
+    <string name="mood_4">Хорошо</string>
+    <string name="mood_5">Отлично</string>
+    <string-array name="gratitude_prompts">
+        <item>Что сегодня вызвало у вас улыбку, хотя бы маленькую?</item>
+        <item>Кто сделал ваш день чуточку легче?</item>
+        <item>Что хорошего сделало для вас сегодня ваше тело?</item>
+        <item>Какой маленькой радости вы рады?</item>
+        <item>Что прошло лучше, чем вы ожидали?</item>
+        <item>Что красивое вы заметили сегодня?</item>
+        <item>Чего вы ждёте с нетерпением?</item>
+    </string-array>
+
+    <string name="balance_title">Колесо баланса</string>
+    <string name="balance_text">Насколько наполнена каждая сфера вашей жизни прямо сейчас? Правильных ответов нет. Гармония — это не десятка везде, а понимание, где нужно немного заботы.</string>
+    <string name="balance_empty">Посмотрите, где жизнь наполнена, а где просит заботы.</string>
+    <string name="balance_check">Проверить баланс</string>
+    <string name="balance_previous">Контур: %s</string>
+    <string name="area_body">Тело</string>
+    <string name="area_mind">Ум</string>
+    <string name="area_people">Отношения</string>
+    <string name="area_work">Дело и смысл</string>
+    <string name="area_rest">Отдых</string>
+    <string name="area_joy">Радость</string>
+
+    <!-- Onboarding -->
+    <string name="welcome_text">Тихое место для ума: несколько минут в день для спокойствия, ясности и гармонии.</string>
+    <string name="welcome_1">Медитации и визуализации с голосом</string>
+    <string name="welcome_2">Аффирмации и своя доска визуализаций</string>
+    <string name="welcome_3">Дыхательные практики и мягкие звуки природы</string>
+    <string name="welcome_4">Бесплатно, без рекламы и аккаунта. Всё остаётся на телефоне.</string>
+    <string name="ob_start">Начать</string>
+    <string name="ob_name_title">Как к вам обращаться?</string>
+    <string name="ob_name_text">Только для приветствия. Можно пропустить.</string>
+    <string name="ob_name_hint">Ваше имя</string>
+    <string name="ob_focus_title">Чего бы вам хотелось больше?</string>
+    <string name="ob_focus_text">Из этих тем будут аффирмация дня и ваш ежедневный микс. Изменить можно в любой момент.</string>
+    <string name="ob_remind_title">Мягкие напоминания</string>
+    <string name="ob_remind_text">Доброе слово утром и приглашение расслабиться вечером.</string>
+    <string name="ob_finish">Начать</string>
+    <string name="remind_morning">Утренняя аффирмация</string>
+    <string name="remind_morning_text">Начните день с доброй мысли</string>
+    <string name="remind_evening">Вечернее расслабление</string>
+    <string name="remind_evening_text">Приглашение отпустить день</string>
+
+    <!-- Settings -->
+    <string name="set_name">Ваше имя</string>
+    <string name="set_voice">Голос</string>
+    <string name="set_voice_on">Читать практики вслух</string>
+    <string name="set_voice_on_text">Использует офлайн-синтез речи телефона</string>
+    <string name="set_voice_rate">Скорость</string>
+    <string name="rate_slow">Медленно</string>
+    <string name="rate_calm">Спокойно</string>
+    <string name="rate_normal">Обычно</string>
+    <string name="set_sound">Звук</string>
+    <string name="set_ambience_volume">Громкость фоновых звуков</string>
+    <string name="set_bells">Колокол и звуки дыхания</string>
+    <string name="set_bells_text">Поющая чаша в начале и в конце, мягкие тоны при дыхании</string>
+    <string name="set_haptics">Вибрация при дыхании</string>
+    <string name="set_haptics_text">Лёгкое касание при каждой смене фазы</string>
+    <string name="set_reminders">Напоминания</string>
+    <string name="set_goal">Цель на день</string>
+    <string name="set_appearance">Оформление</string>
+    <string name="theme_system">Системное</string>
+    <string name="theme_light">Светлое</string>
+    <string name="theme_dark">Тёмное</string>
+    <string name="language">Язык</string>
+    <string name="lang_system">Системный</string>
+    <string name="perm_title">Разрешите уведомления</string>
+    <string name="perm_text">Без разрешения напоминания не придут.</string>
+    <string name="autostart_title">Напоминания не приходят?</string>
+    <string name="autostart_text">Некоторые телефоны (Xiaomi, Huawei, Oppo…) останавливают приложения в фоне. Разрешите автозапуск и снимите ограничения батареи для Serene.</string>
+    <string name="backup">Резервная копия</string>
+    <string name="backup_text">Дневник, избранное, аффирмации и визуализации хранятся только на этом телефоне. Сохраните их в файл, чтобы не потерять. Фото в копию не входят.</string>
+    <string name="backup_export">Сохранить</string>
+    <string name="backup_import">Восстановить</string>
+    <string name="backup_import_title">Восстановить из копии?</string>
+    <string name="backup_import_text">Всё, что сейчас есть в приложении, заменится данными из копии.</string>
+    <string name="backup_done">Копия сохранена</string>
+    <string name="backup_failed">Что-то пошло не так</string>
+    <string name="backup_restored">Восстановлено</string>
+    <string name="about">О приложении</string>
+    <string name="about_text">Serene — бесплатное приложение с открытым кодом, без рекламы, аккаунтов и слежки. Голос и звуки создаются прямо на телефоне, поэтому всё работает без интернета.</string>
+    <string name="about_version">Версия %s</string>
+
+    <!-- Notifications and widget -->
+    <string name="channel_name">Напоминания</string>
+    <string name="channel_desc">Утренние аффирмации и вечернее расслабление</string>
+    <string name="notif_morning_title">Ваша аффирмация на сегодня</string>
+    <string name="notif_evening_title">Время расслабиться</string>
+    <string name="notif_evening_text">Отпустите день: несколько тихих минут перед сном.</string>
+    <string name="widget_name">Аффирмация дня</string>
+    <string name="widget_desc">Добрая мысль на сегодня на главном экране</string>
+    <string name="widget_eyebrow">На сегодня</string>
+</resources>
