@@ -33,10 +33,11 @@ Serene gives those minutes a gentle shape: a kind thought in the morning, a brea
 |---|---|---|
 | 🧘 | **10 guided meditations** | Calm in 3 minutes, breath awareness, body scan, loving-kindness, letting go, inner harmony, gratitude, morning intention, self-compassion and a wind-down for sleep. |
 | 🌅 | **10 guided visualizations** | Your safe place, a forest walk, the ocean shore, a mountain lake, healing light, meeting your future self, releasing worries, an inner garden, a goal come true and a starry sky. |
-| 🗣️ | **Read aloud, offline** | Sessions are spoken by your phone's own text-to-speech, slowed down and softened, with time to breathe between lines. No voice installed? The words appear on screen at a reading pace. |
+| 🗣️ | **A calm narrator, offline** | Every meditation, visualization and affirmation is narrated by a natural neural voice, recorded ahead of time and shipped with the app, so it works without internet. You can switch to your phone's own voice in settings. |
 | 🌊 | **Soundscapes made on the phone** | Rain, ocean, stream, wind, forest with birdsong, fireplace, a warm tone and deep noise, synthesised live: they never loop. A singing bowl opens and closes each session. |
 | ✨ | **240 affirmations** | Twelve themes from calm and self-love to courage and restful sleep. Favourites, your own affirmations, an affirmation of the day, and a daily mix read aloud with room to repeat each one. |
 | 🖼️ | **Vision board** | Add what you want to bring into your life with a photo, how it looks and feels, and a line to say to yourself. *Visualize my board* turns it into a personal guided session. |
+| 🎙️ | **Your own voice** | For your own affirmations and visions, record yourself in the app or upload an audio file, or let the phone read your words. |
 | 🌬️ | **Breathing** | Calming 4-6, box breathing, 4-7-8, coherent breathing, the physiological sigh and equal breathing, with a glowing orb, soft tones and a light vibration at each change. |
 | ⏳ | **Silent meditation timer** | 3 to 60 minutes, any soundscape, an optional interval bell. |
 | 📔 | **Journal** | Mood check-ins, three good things, notes, a two-week mood chart, a practice calendar, streaks and minutes. |
@@ -67,7 +68,7 @@ No accounts, no servers, no analytics, no ads, no internet permission. The journ
 
 - **Kotlin + Jetpack Compose**, Material 3 with a custom palette, the Inter and Lora typefaces.
 - **Audio synthesis in code**: noise generators, filters and sine partials stream into an `AudioTrack` (`audio/Soundscape.kt`); the singing bowl is a set of slowly beating partials (`audio/Chimes.kt`). No audio files ship with the app.
-- **Android `TextToSpeech`** for the voice, with ducking of the soundscape while it speaks.
+- **Narration** recorded with open neural voices by `tools/narrate.py` ([Silero](https://github.com/snakers4/silero-models) for Russian, [Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M) for English) and shipped as Opus files keyed by a hash of each line; the phone's `TextToSpeech` speaks anything without a recording. The soundscape ducks while the voice speaks.
 - Animated scenes (dawn, ocean, forest, night, mountain, meadow, light, space) are drawn on a `Canvas`.
 - **Room** for sessions, journal, balance checks, own affirmations, favourites and visions · **DataStore** for settings · **AlarmManager** for reminders.
 
@@ -103,5 +104,6 @@ cd serene
 ## License
 
 [MIT](LICENSE) · Inter and Lora typefaces under the SIL Open Font License 1.1 · Material Symbols under the Apache License 2.0.
+Russian narration made with Silero TTS models (CC BY-NC-SA 4.0, non-commercial use) · English narration made with Kokoro-82M (Apache License 2.0).
 
 Serene is for relaxation and well-being. It is not a medical or psychological treatment.

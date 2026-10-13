@@ -103,8 +103,8 @@ fun OnboardingScreen(onDone: () -> Unit) {
                         Text(stringResource(R.string.welcome_text), style = body(18.sp))
                         Spacer(Modifier.height(24.dp))
                         listOf(R.string.welcome_1, R.string.welcome_2, R.string.welcome_3, R.string.welcome_4).forEach {
-                            Row(Modifier.padding(vertical = 5.dp), verticalAlignment = Alignment.CenterVertically) {
-                                Box(Modifier.size(6.dp).clip(CircleShape).background(Color.White))
+                            Row(Modifier.padding(vertical = 5.dp), verticalAlignment = Alignment.Top) {
+                                Box(Modifier.padding(top = 9.dp).size(6.dp).clip(CircleShape).background(Color.White))
                                 Spacer(Modifier.width(12.dp))
                                 Text(stringResource(it), style = body(15.sp))
                             }

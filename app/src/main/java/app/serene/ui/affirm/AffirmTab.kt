@@ -69,7 +69,7 @@ fun rememberAffirmations(setId: String, settings: Settings): List<Affirmation> {
     val m = mine ?: return emptyList()
     return remember(setId, lib, f, m, settings.focus) {
         when (setId) {
-            Library.MINE -> m.map { Affirmation("m:${it.id}", it.text, Library.MINE) }
+            Library.MINE -> m.map { Affirmation("m:${it.id}", it.text, Library.MINE, it.audio) }
             FAVORITES -> f.mapNotNull { lib.affirmation(it.key, m) }
             MIX -> lib.mix(settings.focus, f.map { it.key }, m).let { all ->
                 // A fresh, short playlist each day rather than all 240 lines.

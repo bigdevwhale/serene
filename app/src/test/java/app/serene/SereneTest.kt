@@ -72,7 +72,7 @@ class SereneTest {
     @Test
     fun `vision session tags lines with their vision`() {
         val g = en.visionSession(listOf(Vision(id = 1, title = "A garden", details = "Green", affirmation = "I grow"), Vision(id = 2, title = "Calm")))
-        assertTrue(g.steps.any { it.tag == 0 && it.text.contains("A garden") })
+        assertTrue(g.steps.any { it.tag == 0 && it.text == "A garden" })
         assertTrue(g.steps.any { it.tag == 1 && it.text.contains("Calm") })
         assertTrue(g.steps.first().tag == -1 && g.steps.last().tag == -1)
     }
@@ -89,6 +89,21 @@ class SereneTest {
         val s2 = StatsCalc.of(sessions + Session(at = at(today), kind = PracticeKind.TIMER, seconds = 600), today, ZoneOffset.UTC)
         assertEquals(2, s2.streak)
         assertEquals(600, s2.todaySeconds)
+    }
+
+    @Test
+    fun `narration keys match the recording tool`() {
+        // tools/narrate.py: sha1(text.strip()).hexdigest()[:16]
+        assertEquals("a9993e364706816a", app.serene.audio.Narrator.key("abc"))
+        assertEquals("a9993e364706816a", app.serene.audio.Narrator.key("  abc "))
+    }
+
+    @Test
+    fun `vision session keeps the user's words apart from stock lines`() {
+        val g = ru.visionSession(listOf(Vision(id = 1, title = "Дом у моря", affirmation = "Мне спокойно", audio = "x.m4a"), Vision(id = 2, title = "Сад")))
+        assertTrue(g.steps.any { it.audio == "x.m4a" && it.tag == 0 })
+        assertTrue(g.steps.none { it.text.contains("Дом у моря") && it.audio.isEmpty() })
+        assertTrue(g.steps.any { it.text == "Сад" && it.tag == 1 })
     }
 
     @Test

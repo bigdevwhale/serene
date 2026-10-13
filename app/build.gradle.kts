@@ -62,6 +62,8 @@ android {
     }
     androidResources {
         generateLocaleConfig = true
+        // Narration is already Opus; stored uncompressed it can be played straight from the APK.
+        noCompress += "webm"
     }
     lint {
         error += "MissingTranslation"

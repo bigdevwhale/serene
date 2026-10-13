@@ -50,6 +50,8 @@ import androidx.compose.ui.unit.dp
 import app.serene.R
 import app.serene.container
 import app.serene.data.Vision
+import app.serene.audio.Narrator
+import app.serene.ui.components.AudioPicker
 import app.serene.ui.components.ConfirmDialog
 import app.serene.ui.components.PrimaryButton
 import app.serene.ui.components.SectionTitle
@@ -71,12 +73,13 @@ fun EditVisionScreen(id: Long, onDone: () -> Unit) {
     var details by rememberSaveable { mutableStateOf("") }
     var affirmation by rememberSaveable { mutableStateOf("") }
     var image by rememberSaveable { mutableStateOf("") }
+    var audio by rememberSaveable { mutableStateOf("") }
     var hue by rememberSaveable { mutableIntStateOf((0 until cardGradients.size).random()) }
     var confirmDelete by remember { mutableStateOf(false) }
     LaunchedEffect(id) {
         if (id > 0) container.db.dao().vision(id)?.let { v ->
             loaded = v
-            title = v.title; details = v.details; affirmation = v.affirmation; image = v.image; hue = v.hue
+            title = v.title; details = v.details; affirmation = v.affirmation; image = v.image; hue = v.hue; audio = v.audio
         }
     }
     val pick = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -134,6 +137,12 @@ fun EditVisionScreen(id: Long, onDone: () -> Unit) {
             UTextField(details, { details = it }, placeholder = stringResource(R.string.vision_details_hint), minLines = 3)
             SectionTitle(stringResource(R.string.vision_affirmation))
             UTextField(affirmation, { affirmation = it }, placeholder = stringResource(R.string.vision_affirmation_hint))
+            SectionTitle(stringResource(R.string.vision_voice))
+            Text(stringResource(R.string.vision_voice_text), style = UType.Muted, modifier = Modifier.padding(start = 4.dp, bottom = 8.dp))
+            AudioPicker(audio, listOf(title, details, affirmation).filter { it.isNotBlank() }.joinToString(". ")) { new ->
+                if (audio != loaded?.audio) Narrator.delete(context, audio)
+                audio = new
+            }
             Spacer(Modifier.height(20.dp))
         }
         PrimaryButton(
@@ -142,8 +151,9 @@ fun EditVisionScreen(id: Long, onDone: () -> Unit) {
                 val prev = loaded
                 val v = Vision(
                     id = prev?.id ?: 0, title = title.trim(), details = details.trim(), affirmation = affirmation.trim(),
-                    image = image, hue = hue, createdAt = prev?.createdAt ?: System.currentTimeMillis(),
+                    image = image, hue = hue, createdAt = prev?.createdAt ?: System.currentTimeMillis(), audio = audio,
                 )
+                if (prev != null && prev.audio.isNotEmpty() && prev.audio != audio) Narrator.delete(context, prev.audio)
                 if (prev != null && prev.image.isNotEmpty() && prev.image != image) VisionImages.delete(context, prev.image)
                 container.write { if (prev != null) dao().updateVision(v) else dao().insertVision(v) }
                 onDone()
@@ -159,6 +169,8 @@ fun EditVisionScreen(id: Long, onDone: () -> Unit) {
             onConfirm = {
                 loaded?.let { v ->
                     VisionImages.delete(context, v.image)
+                    Narrator.delete(context, v.audio)
+                    if (audio != v.audio) Narrator.delete(context, audio)
                     if (image != v.image) VisionImages.delete(context, image)
                     container.write { dao().deleteVision(v) }
                 }

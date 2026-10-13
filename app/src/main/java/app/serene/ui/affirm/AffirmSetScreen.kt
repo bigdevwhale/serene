@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AudioFile
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Favorite
@@ -51,6 +52,8 @@ import app.serene.data.Favorite
 import app.serene.data.MyAffirmation
 import app.serene.data.Settings
 import app.serene.ui.Go
+import app.serene.audio.Narrator
+import app.serene.ui.components.AudioPicker
 import app.serene.ui.components.ConfirmDialog
 import app.serene.ui.components.PrimaryButton
 import app.serene.ui.components.SoftButton
@@ -118,6 +121,7 @@ fun AffirmSetScreen(setId: String, settings: Settings, go: Go) {
                 ) {
                     Text(a.text, style = UType.Quote.copy(fontSize = 17.sp, lineHeight = 24.sp), modifier = Modifier.weight(1f).padding(vertical = 6.dp))
                     if (setId == Library.MINE) {
+                        if (a.audio.isNotEmpty()) Icon(Icons.Rounded.AudioFile, null, Modifier.padding(start = 6.dp), tint = U.c.sage)
                         IconButton(onClick = { editing = a }) { Icon(Icons.Rounded.Edit, stringResource(R.string.edit), tint = U.c.faint) }
                     }
                     val on = a.key in fav
@@ -131,23 +135,39 @@ fun AffirmSetScreen(setId: String, settings: Settings, go: Go) {
 
     editing?.let { a ->
         var text by remember(a.key) { mutableStateOf(a.text) }
+        var audio by remember(a.key) { mutableStateOf(a.audio) }
+        fun dropUnsaved() { if (audio != a.audio) Narrator.delete(context, audio) }
         val id = a.key.removePrefix("m:").toLongOrNull() ?: 0L
         AlertDialog(
-            onDismissRequest = { editing = null },
+            onDismissRequest = { dropUnsaved(); editing = null },
             containerColor = U.c.bg,
             title = { Text(stringResource(R.string.edit), style = UType.Strong) },
-            text = { UTextField(text, { text = it }, minLines = 3) },
+            text = {
+                Column {
+                    UTextField(text, { text = it }, minLines = 3)
+                    Spacer(Modifier.height(12.dp))
+                    AudioPicker(audio, text) { new ->
+                        if (audio != a.audio) Narrator.delete(context, audio)
+                        audio = new
+                    }
+                }
+            },
             confirmButton = {
                 TextButton(onClick = {
-                    if (text.isNotBlank()) container.write { dao().updateMine(id, text.trim()) }
+                    if (text.isNotBlank()) {
+                        if (audio != a.audio) Narrator.delete(context, a.audio)
+                        val t = text.trim()
+                        val au = audio
+                        container.write { dao().updateMine(id, t, au) }
+                    } else dropUnsaved()
                     editing = null
                 }) { Text(stringResource(R.string.save), color = U.c.accent, style = UType.Button) }
             },
             dismissButton = {
                 Row {
-                    IconButton(onClick = { deleting = a; editing = null }) { Icon(Icons.Rounded.Delete, stringResource(R.string.delete), tint = U.c.danger) }
+                    IconButton(onClick = { dropUnsaved(); deleting = a; editing = null }) { Icon(Icons.Rounded.Delete, stringResource(R.string.delete), tint = U.c.danger) }
                     Box(Modifier.width(4.dp))
-                    TextButton(onClick = { editing = null }) { Text(stringResource(R.string.cancel), color = U.c.muted, style = UType.Button) }
+                    TextButton(onClick = { dropUnsaved(); editing = null }) { Text(stringResource(R.string.cancel), color = U.c.muted, style = UType.Button) }
                 }
             },
         )
@@ -155,7 +175,10 @@ fun AffirmSetScreen(setId: String, settings: Settings, go: Go) {
     deleting?.let { a ->
         ConfirmDialog(
             stringResource(R.string.delete_affirmation), a.text, stringResource(R.string.delete),
-            onConfirm = { a.key.removePrefix("m:").toLongOrNull()?.let { id -> container.write { dao().deleteMine(id) } } },
+            onConfirm = {
+                Narrator.delete(context, a.audio)
+                a.key.removePrefix("m:").toLongOrNull()?.let { id -> container.write { dao().deleteMine(id) } }
+            },
             onDismiss = { deleting = null }, danger = true,
         )
     }

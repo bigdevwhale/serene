@@ -25,7 +25,12 @@ data class Settings(
     /** Affirmation set ids the user cares about most; empty means all. */
     val focus: Set<String> = emptySet(),
     val voice: Boolean = true,
-    val voiceRate: Float = 0.85f,
+    /** Recorded neural narration for stock lines; off means the phone's voice for everything. */
+    val studioVoice: Boolean = true,
+    /** Natural pace; the calm comes from pauses between sentences. */
+    val voiceRate: Float = 1f,
+    /** Chosen engine voice per language: "en=en-us-x-iol-local;ru=…". */
+    val voices: String = "",
     /** 0..1, background sound level during sessions. */
     val ambienceVolume: Float = 0.6f,
     val bells: Boolean = true,
@@ -40,6 +45,12 @@ data class Settings(
     val breathMinutes: Int = 3,
 )
 
+fun Settings.voiceMap(): Map<String, String> =
+    voices.split(';').mapNotNull { e -> e.split('=', limit = 2).takeIf { it.size == 2 && it[1].isNotEmpty() }?.let { it[0] to it[1] } }.toMap()
+
+fun Settings.withVoice(lang: String, name: String): Settings =
+    copy(voices = (voiceMap() + (lang to name)).entries.joinToString(";") { "${it.key}=${it.value}" })
+
 class SettingsStore(context: Context) {
     private val store = context.applicationContext.dataStore
 
@@ -51,7 +62,9 @@ class SettingsStore(context: Context) {
         name = this[NAME] ?: "",
         focus = this[FOCUS] ?: emptySet(),
         voice = this[VOICE] ?: true,
-        voiceRate = this[VOICE_RATE] ?: 0.85f,
+        voiceRate = this[VOICE_RATE] ?: 1f,
+        studioVoice = this[STUDIO_VOICE] ?: true,
+        voices = this[VOICES] ?: "",
         ambienceVolume = this[AMBIENCE_VOLUME] ?: 0.6f,
         bells = this[BELLS] ?: true,
         haptics = this[HAPTICS] ?: true,
@@ -75,6 +88,8 @@ class SettingsStore(context: Context) {
             it[FOCUS] = s.focus
             it[VOICE] = s.voice
             it[VOICE_RATE] = s.voiceRate
+            it[STUDIO_VOICE] = s.studioVoice
+            it[VOICES] = s.voices
             it[AMBIENCE_VOLUME] = s.ambienceVolume
             it[BELLS] = s.bells
             it[HAPTICS] = s.haptics
@@ -94,7 +109,9 @@ class SettingsStore(context: Context) {
         val NAME = stringPreferencesKey("name")
         val FOCUS = stringSetPreferencesKey("focus")
         val VOICE = booleanPreferencesKey("voice")
-        val VOICE_RATE = floatPreferencesKey("voice_rate")
+        val VOICE_RATE = floatPreferencesKey("voice_rate_v2")
+        val VOICES = stringPreferencesKey("voices")
+        val STUDIO_VOICE = booleanPreferencesKey("studio_voice")
         val AMBIENCE_VOLUME = floatPreferencesKey("ambience_volume")
         val BELLS = booleanPreferencesKey("bells")
         val HAPTICS = booleanPreferencesKey("haptics")

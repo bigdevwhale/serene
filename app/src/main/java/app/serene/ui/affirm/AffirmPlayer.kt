@@ -95,7 +95,7 @@ fun AffirmPlayer(setId: String, start: String, settings: Settings, onClose: () -
     KeepScreenOn(auto)
     DisposableEffect(Unit) {
         onDispose {
-            voice.stop()
+            container.stopSpeaking()
             Soundscape.stop()
         }
     }
@@ -110,18 +110,16 @@ fun AffirmPlayer(setId: String, start: String, settings: Settings, onClose: () -
     }
     LaunchedEffect(auto, pager.currentPage, voiceOn) {
         if (!auto) {
-            voice.stop()
+            container.stopSpeaking()
             return@LaunchedEffect
         }
         delay(700)
         val a = items[pager.currentPage]
-        if (voiceOn && voice.canSpeak) {
-            Soundscape.duck(true)
-            voice.say(a.text, settings.voiceRate)
-            Soundscape.duck(false)
-            // Room to say it back.
-            delay(5500)
-        } else delay(4000L + a.text.split(' ').size * 450L)
+        Soundscape.duck(voiceOn)
+        val heard = voiceOn && container.speak(a.text, settings, if (lib.ru) "ru" else "en", a.audio)
+        Soundscape.duck(false)
+        // Room to say it back.
+        if (heard) delay(5500) else delay(4000L + a.text.split(' ').size * 450L)
         if (pager.currentPage < items.size - 1) pager.animateScrollToPage(pager.currentPage + 1)
         else auto = false
     }
@@ -158,7 +156,7 @@ fun AffirmPlayer(setId: String, start: String, settings: Settings, onClose: () -
                 Spacer(Modifier.width(20.dp))
                 GlassButton(if (voiceOn) Icons.Rounded.RecordVoiceOver else Icons.Rounded.VoiceOverOff, stringResource(R.string.voice), {
                     voiceOn = !voiceOn
-                    voice.stop()
+                    container.stopSpeaking()
                 })
                 Spacer(Modifier.width(20.dp))
                 GlassButton(if (auto) Icons.Rounded.Pause else Icons.Rounded.PlayArrow, stringResource(R.string.autoplay), { auto = !auto }, size = 68.dp, strong = true)

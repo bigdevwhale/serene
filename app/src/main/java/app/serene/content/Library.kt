@@ -6,7 +6,7 @@ import java.time.LocalDate
 import java.util.Locale
 
 /** An affirmation with the key it is stored under in favourites. */
-data class Affirmation(val key: String, val text: String, val setId: String)
+data class Affirmation(val key: String, val text: String, val setId: String, val audio: String = "")
 
 /** Everything the user reads or hears, in one language. */
 class Library private constructor(
@@ -32,7 +32,7 @@ class Library private constructor(
                 set(parts[1])?.items?.getOrNull(i)?.let { Affirmation(key, it, parts[1]) }
             }
             "m" -> parts.getOrNull(1)?.toLongOrNull()?.let { id ->
-                mine.firstOrNull { it.id == id }?.let { Affirmation(key, it.text, MINE) }
+                mine.firstOrNull { it.id == id }?.let { Affirmation(key, it.text, MINE, it.audio) }
             }
             else -> null
         }
@@ -51,7 +51,7 @@ class Library private constructor(
     fun mix(focus: Set<String>, favorites: List<String>, mine: List<MyAffirmation>): List<Affirmation> {
         val chosen = sets.filter { focus.isEmpty() || it.id in focus }.ifEmpty { sets }
         val base = chosen.flatMap(::affirmations)
-        val extra = favorites.mapNotNull { affirmation(it, mine) } + mine.map { Affirmation("m:${it.id}", it.text, MINE) }
+        val extra = favorites.mapNotNull { affirmation(it, mine) } + mine.map { Affirmation("m:${it.id}", it.text, MINE, it.audio) }
         return (extra + base).distinctBy { it.key }
     }
 
@@ -69,21 +69,28 @@ class Library private constructor(
                 add(s("Once more. Breathe in… and out. Let your body soften.", 6))
                 add(s("Now let's spend a few moments with what matters to you, as if it has already come true.", 4))
             }
+            // Stock lines are narrated by the studio voice; the user's own words come from their
+            // recording when they attached one, otherwise from the phone's voice.
             visions.forEachIndexed { i, v ->
-                if (ru) {
-                    add(Step(if (i == 0) "Представьте: ${v.title}." else "А теперь представьте: ${v.title}.", 5, i))
+                add(Step(if (ru) (if (i == 0) "Представьте то, о чём мечтаете." else "А теперь — следующее.") else (if (i == 0) "Picture what you long for." else "And now, the next one."), 2, i))
+                if (v.audio.isNotEmpty()) {
+                    add(Step(v.title, 12, i, v.audio))
+                } else {
+                    add(Step(v.title.trim(), 5, i))
                     if (v.details.isNotBlank()) add(Step(v.details.trim(), 10, i))
+                }
+                if (ru) {
                     add(Step("Посмотрите вокруг. Какие цвета, какой свет? Кто рядом с вами?", 14, i))
                     add(Step("Прислушайтесь. Какие звуки вы слышите в этот момент?", 10, i))
                     add(Step("Почувствуйте, каково это — жить это прямо сейчас. Где в теле живёт эта радость? Позвольте ей расти.", 16, i))
-                    if (v.affirmation.isNotBlank()) add(Step("Скажите себе: ${v.affirmation.trim()}", 8, i))
                 } else {
-                    add(Step(if (i == 0) "Picture this: ${v.title}." else "Now picture this: ${v.title}.", 5, i))
-                    if (v.details.isNotBlank()) add(Step(v.details.trim(), 10, i))
                     add(Step("Look around. What colours do you see, what light? Who is there with you?", 14, i))
                     add(Step("Listen. What sounds are there in this moment?", 10, i))
                     add(Step("Feel what it is like to live this, right now. Where in your body is the joy? Let it grow.", 16, i))
-                    if (v.affirmation.isNotBlank()) add(Step("Say to yourself: ${v.affirmation.trim()}", 8, i))
+                }
+                if (v.affirmation.isNotBlank() && v.audio.isEmpty()) {
+                    add(Step(if (ru) "Скажите себе:" else "Say to yourself:", 1, i))
+                    add(Step(v.affirmation.trim(), 8, i))
                 }
             }
             if (ru) {
@@ -114,8 +121,17 @@ class Library private constructor(
     }
 }
 
-/** Rough spoken length: slow text-to-speech plus the silence after each line. */
+/**
+ * Seconds a line takes to say when it has a studio recording; set by the app at start-up so
+ * session lengths match what is actually heard. Null (as in unit tests) means estimate.
+ */
+object Spoken {
+    @Volatile var lookup: ((text: String, ru: Boolean) -> Float?)? = null
+}
+
+/** Spoken length (recorded, or estimated from slow speech) plus the silence after the line. */
 fun Step.estimateSeconds(ru: Boolean): Float {
+    Spoken.lookup?.invoke(text, ru)?.let { return it + pause }
     val words = text.split(' ', '\n').count { it.isNotBlank() }
     return words / (if (ru) 2.0f else 2.3f) + pause
 }

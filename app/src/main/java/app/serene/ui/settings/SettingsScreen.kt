@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
@@ -44,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -54,6 +56,8 @@ import app.serene.container
 import app.serene.data.Backup
 import app.serene.data.Settings
 import app.serene.data.ThemeMode
+import app.serene.data.voiceMap
+import app.serene.data.withVoice
 import app.serene.notify.Reminders
 import app.serene.ui.Language
 import app.serene.ui.clockTime
@@ -137,16 +141,45 @@ fun SettingsScreen(settings: Settings, onBack: () -> Unit) {
             SectionTitle(stringResource(R.string.set_voice))
             UCard {
                 SwitchRow(stringResource(R.string.set_voice_on), stringResource(R.string.set_voice_on_text), settings.voice) { v -> update { it.copy(voice = v) } }
+                HorizontalDivider(Modifier.padding(vertical = 10.dp), color = U.c.line)
+                SwitchRow(stringResource(R.string.set_studio), stringResource(R.string.set_studio_text), settings.studioVoice) { v -> update { it.copy(studioVoice = v) } }
+                HorizontalDivider(Modifier.padding(vertical = 10.dp), color = U.c.line)
                 Spacer(Modifier.height(10.dp))
                 Text(stringResource(R.string.set_voice_rate), style = UType.Muted)
                 Spacer(Modifier.height(6.dp))
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    listOf(0.7f to R.string.rate_slow, 0.85f to R.string.rate_calm, 1.0f to R.string.rate_normal).forEach { (r, label) ->
+                    listOf(0.85f to R.string.rate_slow, 0.93f to R.string.rate_calm, 1.0f to R.string.rate_normal).forEach { (r, label) ->
                         Chip(stringResource(label), settings.voiceRate == r, { update { it.copy(voiceRate = r) } })
                     }
                 }
+                val options = remember(voiceState, loc) { voice.voices() }
+                if (options.size > 1) {
+                    Spacer(Modifier.height(12.dp))
+                    Text(stringResource(R.string.set_voice_pick), style = UType.Muted)
+                    Text(stringResource(R.string.set_voice_pick_note), style = UType.Small.copy(color = U.c.faint), modifier = Modifier.padding(top = 2.dp))
+                    Spacer(Modifier.height(4.dp))
+                    val selected = settings.voiceMap()[loc.language].orEmpty()
+                    fun pick(name: String) {
+                        val next = settings.withVoice(loc.language, name)
+                        update { next }
+                        voice.choose(next.voiceMap())
+                        container.scope.launch { voice.say(sample, settings.voiceRate) }
+                    }
+                    VoiceRow(stringResource(R.string.voice_default), stringResource(R.string.voice_default_text), selected.isEmpty()) { pick("") }
+                    options.forEachIndexed { i, o ->
+                        VoiceRow(
+                            stringResource(R.string.voice_n, i + 1),
+                            stringResource(if (o.online) R.string.voice_online else R.string.voice_offline) +
+                                if (o.quality >= android.speech.tts.Voice.QUALITY_HIGH) " · " + stringResource(R.string.voice_hq) else "",
+                            o.name == selected,
+                        ) { pick(o.name) }
+                    }
+                }
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    TextButton(onClick = { container.scope.launch { voice.say(sample, settings.voiceRate) } }) {
+                    TextButton(onClick = {
+                        val first = app.serene.content.Library.of(loc).sets.first().items.first()
+                        container.scope.launch { container.speak(first, settings, loc.language) }
+                    }) {
                         Text(stringResource(R.string.voice_test), color = U.c.accent, style = UType.Button)
                     }
                     TextButton(onClick = {
@@ -279,5 +312,17 @@ private fun ReminderRow(title: String, at: Int, onTime: () -> Unit, onToggle: (B
             Text(if (at >= 0) clockTime(at) else stringResource(R.string.off), style = UType.Muted.copy(color = if (at >= 0) U.c.accent else U.c.muted))
         }
         Switch(checked = at >= 0, onCheckedChange = onToggle, colors = SwitchDefaults.colors(checkedTrackColor = U.c.accent))
+    }
+}
+
+@Composable
+private fun VoiceRow(title: String, text: String, on: Boolean, onClick: () -> Unit) {
+    Row(Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+        androidx.compose.material3.RadioButton(on, null, colors = androidx.compose.material3.RadioButtonDefaults.colors(selectedColor = U.c.accent))
+        Spacer(Modifier.width(8.dp))
+        Column(Modifier.weight(1f)) {
+            Text(title, style = UType.Strong.copy(fontSize = 15.sp))
+            Text(text, style = UType.Small.copy(color = U.c.muted))
+        }
     }
 }

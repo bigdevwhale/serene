@@ -134,7 +134,7 @@ fun TodayTab(settings: Settings, go: Go, onTab: (Tab) -> Unit) {
             Text(daily.text, style = TextStyle(fontFamily = Lora, fontSize = 25.sp, lineHeight = 34.sp, color = Color.White), modifier = Modifier.padding(end = 12.dp))
             Spacer(Modifier.height(6.dp))
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                IconButton(onClick = { container.scope.launch { voice.say(daily.text, settings.voiceRate) } }) {
+                IconButton(onClick = { container.scope.launch { container.speak(daily.text, settings, if (lib.ru) "ru" else "en", daily.audio) } }) {
                     Icon(Icons.AutoMirrored.Rounded.VolumeUp, stringResource(R.string.listen), tint = Color.White)
                 }
                 IconButton(onClick = { container.write { if (fav) dao().unfavorite(daily.key) else dao().favorite(Favorite(daily.key)) } }) {

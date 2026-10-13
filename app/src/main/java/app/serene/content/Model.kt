@@ -8,8 +8,12 @@ enum class Scene { DAWN, OCEAN, FOREST, NIGHT, MOUNTAIN, MEADOW, LIGHT, SPACE }
 /** Background sound, synthesised on the device (see app.serene.audio.Soundscape). */
 enum class Ambience { NONE, RAIN, OCEAN, STREAM, WIND, FOREST, FIRE, DRONE, BROWN }
 
-/** One spoken line of a guided session, then [pause] seconds of quiet. [tag] marks which vision a line belongs to. */
-class Step(val text: String, val pause: Int = 6, val tag: Int = -1)
+/**
+ * One spoken line of a guided session, then [pause] seconds of quiet. [tag] marks which vision
+ * a line belongs to; [audio] is the user's own recording (a file name in filesDir/audio) to play
+ * instead of speaking [text].
+ */
+class Step(val text: String, val pause: Int = 6, val tag: Int = -1, val audio: String = "")
 
 fun s(text: String, pause: Int = 6) = Step(text, pause)
 

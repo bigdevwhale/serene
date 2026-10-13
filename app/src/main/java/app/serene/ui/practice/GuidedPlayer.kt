@@ -149,7 +149,7 @@ private fun GuidedSession(g: Guided, visions: List<Vision>, ru: Boolean, setting
     LaunchedEffect(Unit) { Chimes.prepare(Chime.BOWL, Chime.GONG) }
     DisposableEffect(Unit) {
         onDispose {
-            voice.stop()
+            container.stopSpeaking()
             Soundscape.stop()
         }
     }
@@ -177,13 +177,11 @@ private fun GuidedSession(g: Guided, visions: List<Vision>, ru: Boolean, setting
         while (index < g.steps.size) {
             val step = g.steps[index]
             inStep = 0f
-            val speak = voiceOn && voice.canSpeak
             val said = System.currentTimeMillis()
-            if (speak) {
-                Soundscape.duck(true)
-                voice.say(step.text, settings.voiceRate)
-                Soundscape.duck(false)
-            } else {
+            Soundscape.duck(voiceOn)
+            val heard = voiceOn && container.speak(step.text, settings, if (ru) "ru" else "en", step.audio)
+            Soundscape.duck(false)
+            if (!heard) {
                 // Time to read the line on screen.
                 delay((step.text.split(' ').size * 380L).coerceAtLeast(2500L))
             }
@@ -205,7 +203,7 @@ private fun GuidedSession(g: Guided, visions: List<Vision>, ru: Boolean, setting
     }
 
     fun restartAt(i: Int) {
-        voice.stop()
+        container.stopSpeaking()
         index = i.coerceIn(0, g.steps.size - 1)
         jump++
     }
@@ -225,7 +223,7 @@ private fun GuidedSession(g: Guided, visions: List<Vision>, ru: Boolean, setting
                     Spacer(Modifier.width(10.dp))
                     GlassButton(
                         if (voiceOn) Icons.Rounded.RecordVoiceOver else Icons.Rounded.VoiceOverOff, stringResource(R.string.voice),
-                        { voiceOn = !voiceOn; voice.stop() }, size = 44.dp,
+                        { voiceOn = !voiceOn; container.stopSpeaking() }, size = 44.dp,
                     )
                 }
                 if (g.id != Library.VISIONS_ID) {
@@ -238,7 +236,7 @@ private fun GuidedSession(g: Guided, visions: List<Vision>, ru: Boolean, setting
 
             Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
                 when (stage) {
-                    Stage.INTRO -> Intro(g, ru, voiceOn, voiceState) {
+                    Stage.INTRO -> Intro(g, ru, voiceOn && !settings.studioVoice, voiceState) {
                         stage = Stage.PLAYING
                     }
                     Stage.PLAYING -> Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -288,7 +286,7 @@ private fun GuidedSession(g: Guided, visions: List<Vision>, ru: Boolean, setting
                         {
                             paused = !paused
                             if (paused) {
-                                voice.stop()
+                                container.stopSpeaking()
                                 Soundscape.duck(true)
                             } else Soundscape.duck(false)
                         },
@@ -297,7 +295,7 @@ private fun GuidedSession(g: Guided, visions: List<Vision>, ru: Boolean, setting
                     Spacer(Modifier.width(28.dp))
                     GlassButton(Icons.Rounded.SkipNext, stringResource(R.string.next), {
                         // Past the last line the runner rings the closing bell.
-                        voice.stop()
+                        container.stopSpeaking()
                         index = (index + 1).coerceIn(0, g.steps.size)
                         jump++
                     })

@@ -137,6 +137,23 @@
     <string name="photo_change">Change photo</string>
     <string name="photo_remove">Remove photo</string>
 
+    <string name="audio_tts">Phone voice</string>
+    <string name="audio_tts_text">Your words are read by the phone\'s speech engine</string>
+    <string name="audio_own">Your own recording</string>
+    <string name="audio_own_text">This audio file plays instead of the voice</string>
+    <string name="audio_record">Record my voice</string>
+    <string name="record_title">Record your voice</string>
+    <string name="record_hint">Tap the microphone and say it slowly, the way you would like to hear it.</string>
+    <string name="record_done">Recorded %s. Listen back, or tap the microphone to try again.</string>
+    <string name="record_listen">Listen back</string>
+    <string name="record_permission">Allow the microphone to record.</string>
+    <string name="record_failed">The microphone is busy or unavailable.</string>
+    <string name="audio_upload">Upload an audio file</string>
+    <string name="audio_replace">Choose another file</string>
+    <string name="audio_remove">Remove recording</string>
+    <string name="vision_voice">Voice</string>
+    <string name="vision_voice_text">Record yourself describing this vision and upload the file, or let the phone read your words.</string>
+
     <!-- Affirmations -->
     <string name="affirm_sub">Words you repeat become the voice you hear inside.</string>
     <string name="mix_title">My daily mix</string>
@@ -144,7 +161,7 @@
     <string name="favorites">Favourites</string>
     <string name="favorites_empty">Tap the heart on any affirmation to keep it here.</string>
     <string name="mine">My own</string>
-    <string name="mine_hint">Write affirmations in your own words: in the present tense, about what you want, not what you want to avoid.</string>
+    <string name="mine_hint">Write affirmations in your own words: in the present tense, about what you want, not what you want to avoid. Tap the pencil to attach your own recording.</string>
     <string name="mine_placeholder">I am allowed to rest.</string>
     <string name="themes">Themes</string>
     <string name="play_all">Play all</string>
@@ -225,7 +242,17 @@
     <string name="set_name">Your name</string>
     <string name="set_voice">Voice</string>
     <string name="set_voice_on">Read sessions aloud</string>
-    <string name="set_voice_on_text">Uses your phone\'s offline speech engine</string>
+    <string name="set_voice_on_text">Uses your phone\'s speech engine</string>
+    <string name="set_voice_pick">Choose a voice. Online voices sound most natural; offline ones work anywhere.</string>
+    <string name="set_studio">Studio narrator</string>
+    <string name="set_studio_text">A recorded natural voice for meditations, visualizations and affirmations</string>
+    <string name="set_voice_pick_note">Used for your own words and when the studio narrator is off.</string>
+    <string name="voice_default">Default</string>
+    <string name="voice_default_text">The voice set in the phone\'s speech settings</string>
+    <string name="voice_n">Voice %d</string>
+    <string name="voice_online">Online, falls back offline</string>
+    <string name="voice_offline">Offline</string>
+    <string name="voice_hq">high quality</string>
     <string name="set_voice_rate">Speed</string>
     <string name="rate_slow">Slow</string>
     <string name="rate_calm">Calm</string>

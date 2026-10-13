@@ -3,8 +3,9 @@ package app.serene.ui.components
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
@@ -13,12 +14,15 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathOperation
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import app.serene.content.Scene
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
+import kotlinx.coroutines.delay
 
 /** Sky colours from top to bottom. */
 fun skyOf(scene: Scene): List<Color> = when (scene) {
@@ -32,12 +36,20 @@ fun skyOf(scene: Scene): List<Color> = when (scene) {
     Scene.SPACE -> listOf(Color(0xFF04050D), Color(0xFF0E1030), Color(0xFF221747), Color(0xFF3B1F55))
 }
 
-/** Seconds since the composable appeared, updated every frame. */
+/**
+ * Seconds since the composable appeared, ticking at about 30 fps. Read it inside a draw block
+ * so a tick only redraws, never recomposes. Scenes move slower than a breath; 30 fps is plenty
+ * and keeps the phone cool during a long session.
+ */
 @Composable
-fun rememberSeconds(): Float {
-    val t by produceState(0f) {
+fun rememberClock(): State<Float> {
+    val t = remember { mutableFloatStateOf(0f) }
+    LaunchedEffect(Unit) {
         val start = withFrameNanos { it }
-        while (true) withFrameNanos { value = (it - start) / 1e9f }
+        while (true) {
+            delay(33)
+            withFrameNanos { t.floatValue = (it - start) / 1e9f }
+        }
     }
     return t
 }
@@ -50,7 +62,7 @@ private class Star(val x: Float, val y: Float, val r: Float, val phase: Float, v
  */
 @Composable
 fun SceneBackdrop(scene: Scene, modifier: Modifier = Modifier, animate: Boolean = true) {
-    val t = if (animate) rememberSeconds() else 0f
+    val clock = if (animate) rememberClock() else null
     val stars = remember(scene) {
         val rnd = Random(scene.ordinal + 7)
         val n = when (scene) { Scene.SPACE -> 160; Scene.NIGHT -> 90; Scene.MOUNTAIN, Scene.DAWN -> 25; else -> 0 }
@@ -63,6 +75,7 @@ fun SceneBackdrop(scene: Scene, modifier: Modifier = Modifier, animate: Boolean 
         }
     }
     Canvas(modifier.fillMaxSize()) {
+        val t = clock?.value ?: 0f
         val w = size.width
         val h = size.height
         drawRect(Brush.verticalGradient(skyOf(scene)))
@@ -93,8 +106,10 @@ fun SceneBackdrop(scene: Scene, modifier: Modifier = Modifier, animate: Boolean 
             Scene.NIGHT -> {
                 val moon = Offset(w * 0.74f, h * 0.18f)
                 drawCircle(Brush.radialGradient(listOf(Color(0x55FFF3D6), Color.Transparent), moon, w * 0.25f), w * 0.25f, moon)
-                drawCircle(Color(0xFFF6EBD0), w * 0.06f, moon)
-                drawCircle(skyOf(scene)[1], w * 0.055f, Offset(moon.x + w * 0.028f, moon.y - w * 0.012f))
+                // A crescent: the disc minus an offset disc, so the sky shows through the bite.
+                val disc = Path().apply { addOval(Rect(moon, w * 0.06f)) }
+                val bite = Path().apply { addOval(Rect(Offset(moon.x + w * 0.028f, moon.y - w * 0.012f), w * 0.055f)) }
+                drawPath(Path.combine(PathOperation.Difference, disc, bite), Color(0xFFF6EBD0))
                 hills(h * 0.86f, h * 0.02f, 1.1f, 0.4f, Color(0xFF0B0C1F))
             }
             Scene.MOUNTAIN -> {

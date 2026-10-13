@@ -143,6 +143,23 @@
     <string name="photo_change">Сменить фото</string>
     <string name="photo_remove">Убрать фото</string>
 
+    <string name="audio_tts">Голос телефона</string>
+    <string name="audio_tts_text">Ваши слова читает синтез речи телефона</string>
+    <string name="audio_own">Своя запись</string>
+    <string name="audio_own_text">Вместо голоса звучит этот аудиофайл</string>
+    <string name="audio_record">Записать голосом</string>
+    <string name="record_title">Запишите свой голос</string>
+    <string name="record_hint">Нажмите на микрофон и произнесите медленно — так, как хотели бы это услышать.</string>
+    <string name="record_done">Записано %s. Прослушайте или нажмите микрофон, чтобы перезаписать.</string>
+    <string name="record_listen">Прослушать</string>
+    <string name="record_permission">Разрешите доступ к микрофону для записи.</string>
+    <string name="record_failed">Микрофон занят или недоступен.</string>
+    <string name="audio_upload">Загрузить аудиофайл</string>
+    <string name="audio_replace">Выбрать другой файл</string>
+    <string name="audio_remove">Убрать запись</string>
+    <string name="vision_voice">Голос</string>
+    <string name="vision_voice_text">Запишите, как вы сами описываете эту визуализацию, и загрузите файл — или пусть ваши слова прочтёт телефон.</string>
+
     <!-- Affirmations -->
     <string name="affirm_sub">Слова, которые вы повторяете, становятся вашим внутренним голосом.</string>
     <string name="mix_title">Мой микс дня</string>
@@ -150,7 +167,7 @@
     <string name="favorites">Избранное</string>
     <string name="favorites_empty">Нажмите на сердечко у любой аффирмации, чтобы сохранить её здесь.</string>
     <string name="mine">Мои</string>
-    <string name="mine_hint">Пишите аффирмации своими словами: в настоящем времени, о том, чего хотите, а не чего избегаете.</string>
+    <string name="mine_hint">Пишите аффирмации своими словами: в настоящем времени, о том, чего хотите, а не чего избегаете. Нажмите карандаш, чтобы прикрепить свою запись.</string>
     <string name="mine_placeholder">Мне можно отдыхать.</string>
     <string name="themes">Темы</string>
     <string name="play_all">Слушать все</string>
@@ -231,7 +248,17 @@
     <string name="set_name">Ваше имя</string>
     <string name="set_voice">Голос</string>
     <string name="set_voice_on">Читать практики вслух</string>
-    <string name="set_voice_on_text">Использует офлайн-синтез речи телефона</string>
+    <string name="set_voice_on_text">Использует синтез речи телефона</string>
+    <string name="set_voice_pick">Выберите голос. Онлайн-голоса звучат естественнее всего, офлайн работают везде.</string>
+    <string name="set_studio">Голос диктора</string>
+    <string name="set_studio_text">Записанный естественный голос для медитаций, визуализаций и аффирмаций</string>
+    <string name="set_voice_pick_note">Звучит для ваших собственных слов и когда голос диктора выключен.</string>
+    <string name="voice_default">По умолчанию</string>
+    <string name="voice_default_text">Голос из настроек синтеза речи телефона</string>
+    <string name="voice_n">Голос %d</string>
+    <string name="voice_online">Онлайн, без сети — офлайн</string>
+    <string name="voice_offline">Офлайн</string>
+    <string name="voice_hq">высокое качество</string>
     <string name="set_voice_rate">Скорость</string>
     <string name="rate_slow">Медленно</string>
     <string name="rate_calm">Спокойно</string>

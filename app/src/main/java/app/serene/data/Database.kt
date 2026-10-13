@@ -1,6 +1,8 @@
 package app.serene.data
 
 import android.content.Context
+import androidx.room.AutoMigration
+import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Delete
@@ -55,6 +57,9 @@ data class MyAffirmation(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val text: String,
     val createdAt: Long = System.currentTimeMillis(),
+    /** The user's own recording, a file name in filesDir/audio; empty means the phone's voice. */
+    @ColumnInfo(defaultValue = "")
+    val audio: String = "",
 )
 
 /** Keys: "a:<setId>:<index>" stock affirmation, "m:<id>" own affirmation, "g:<guidedId>" session. */
@@ -78,6 +83,9 @@ data class Vision(
     /** Index into the card gradients when there is no image. */
     val hue: Int = 0,
     val createdAt: Long = System.currentTimeMillis(),
+    /** The user's own narration of this vision, a file name in filesDir/audio. */
+    @ColumnInfo(defaultValue = "")
+    val audio: String = "",
 )
 
 class Snapshot(
@@ -134,8 +142,8 @@ abstract class SereneDao {
     @Insert
     abstract suspend fun insertMine(a: MyAffirmation): Long
 
-    @Query("UPDATE my_affirmations SET text = :text WHERE id = :id")
-    abstract suspend fun updateMine(id: Long, text: String)
+    @Query("UPDATE my_affirmations SET text = :text, audio = :audio WHERE id = :id")
+    abstract suspend fun updateMine(id: Long, text: String, audio: String)
 
     @Query("DELETE FROM my_affirmations WHERE id = :id")
     protected abstract suspend fun deleteMineRow(id: Long)
@@ -212,8 +220,9 @@ abstract class SereneDao {
 
 @Database(
     entities = [Session::class, JournalEntry::class, BalanceCheck::class, MyAffirmation::class, Favorite::class, Vision::class],
-    version = 1,
+    version = 2,
     exportSchema = true,
+    autoMigrations = [AutoMigration(from = 1, to = 2)],
 )
 abstract class SereneDatabase : RoomDatabase() {
     abstract fun dao(): SereneDao
