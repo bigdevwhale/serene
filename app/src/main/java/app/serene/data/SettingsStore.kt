@@ -1,6 +1,7 @@
 package app.serene.data
 
 import android.content.Context
+import app.serene.content.Ambience
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
@@ -31,6 +32,8 @@ data class Settings(
     val voiceRate: Float = 1f,
     /** Chosen engine voice per language: "en=en-us-x-iol-local;ru=…". */
     val voices: String = "",
+    /** Background sound chosen per session, overriding the one it was written for: "body_scan=RAIN;…". */
+    val ambiences: String = "",
     /** 0..1, background sound level during sessions. */
     val ambienceVolume: Float = 0.6f,
     val bells: Boolean = true,
@@ -51,6 +54,19 @@ fun Settings.voiceMap(): Map<String, String> =
 fun Settings.withVoice(lang: String, name: String): Settings =
     copy(voices = (voiceMap() + (lang to name)).entries.joinToString(";") { "${it.key}=${it.value}" })
 
+private fun Settings.ambienceMap(): Map<String, String> =
+    ambiences.split(';').mapNotNull { e -> e.split('=', limit = 2).takeIf { it.size == 2 }?.let { it[0] to it[1] } }.toMap()
+
+/** The user's background sound for a session, or null when it plays the one it was written for. */
+fun Settings.ambienceFor(id: String): Ambience? =
+    ambienceMap()[id]?.let { runCatching { Ambience.valueOf(it) }.getOrNull() }
+
+fun Settings.withAmbience(id: String, a: Ambience?): Settings {
+    val m = ambienceMap().toMutableMap()
+    if (a == null) m.remove(id) else m[id] = a.name
+    return copy(ambiences = m.entries.joinToString(";") { "${it.key}=${it.value}" })
+}
+
 class SettingsStore(context: Context) {
     private val store = context.applicationContext.dataStore
 
@@ -65,6 +81,7 @@ class SettingsStore(context: Context) {
         voiceRate = this[VOICE_RATE] ?: 1f,
         studioVoice = this[STUDIO_VOICE] ?: true,
         voices = this[VOICES] ?: "",
+        ambiences = this[AMBIENCES] ?: "",
         ambienceVolume = this[AMBIENCE_VOLUME] ?: 0.6f,
         bells = this[BELLS] ?: true,
         haptics = this[HAPTICS] ?: true,
@@ -90,6 +107,7 @@ class SettingsStore(context: Context) {
             it[VOICE_RATE] = s.voiceRate
             it[STUDIO_VOICE] = s.studioVoice
             it[VOICES] = s.voices
+            it[AMBIENCES] = s.ambiences
             it[AMBIENCE_VOLUME] = s.ambienceVolume
             it[BELLS] = s.bells
             it[HAPTICS] = s.haptics
@@ -111,6 +129,7 @@ class SettingsStore(context: Context) {
         val VOICE = booleanPreferencesKey("voice")
         val VOICE_RATE = floatPreferencesKey("voice_rate_v2")
         val VOICES = stringPreferencesKey("voices")
+        val AMBIENCES = stringPreferencesKey("ambiences")
         val STUDIO_VOICE = booleanPreferencesKey("studio_voice")
         val AMBIENCE_VOLUME = floatPreferencesKey("ambience_volume")
         val BELLS = booleanPreferencesKey("bells")

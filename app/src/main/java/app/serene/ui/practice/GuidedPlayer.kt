@@ -69,6 +69,7 @@ import app.serene.audio.Chimes
 import app.serene.audio.Soundscape
 import app.serene.audio.Voice
 import app.serene.container
+import app.serene.content.Ambience
 import app.serene.content.Guided
 import app.serene.content.GuidedKind
 import app.serene.content.Library
@@ -78,6 +79,10 @@ import app.serene.data.Favorite
 import app.serene.data.PracticeKind
 import app.serene.data.Settings
 import app.serene.data.Vision
+import app.serene.data.ambienceFor
+import app.serene.data.withAmbience
+import app.serene.ui.components.AmbienceSheet
+import kotlinx.coroutines.launch
 import app.serene.ui.clock
 import app.serene.ui.components.GlassButton
 import app.serene.ui.components.KeepScreenOn
@@ -127,7 +132,9 @@ private fun GuidedSession(g: Guided, visions: List<Vision>, ru: Boolean, setting
     var inStep by remember { mutableFloatStateOf(0f) }
     var elapsed by remember { mutableIntStateOf(0) }
     var voiceOn by remember { mutableStateOf(settings.voice) }
-    var soundOn by remember { mutableStateOf(true) }
+    val custom = settings.ambienceFor(g.id)
+    val ambience = custom ?: g.ambience
+    var picking by remember { mutableStateOf(false) }
 
     val estimates = remember(g) { g.steps.map { it.estimateSeconds(ru) } }
     val total = estimates.sum()
@@ -153,8 +160,9 @@ private fun GuidedSession(g: Guided, visions: List<Vision>, ru: Boolean, setting
             Soundscape.stop()
         }
     }
-    LaunchedEffect(stage, soundOn) {
-        if (stage == Stage.PLAYING && soundOn) Soundscape.play(g.ambience, settings.ambienceVolume)
+    // Plays during the session, and as a preview while the sound is being chosen.
+    LaunchedEffect(stage, ambience, picking) {
+        if ((stage == Stage.PLAYING || picking) && ambience != Ambience.NONE) Soundscape.play(ambience, settings.ambienceVolume)
         else if (stage != Stage.DONE) Soundscape.stop()
     }
 
@@ -219,7 +227,7 @@ private fun GuidedSession(g: Guided, visions: List<Vision>, ru: Boolean, setting
                 GlassButton(Icons.Rounded.Close, stringResource(R.string.close), { finishEarly() }, size = 44.dp)
                 Spacer(Modifier.weight(1f))
                 if (stage != Stage.DONE) {
-                    GlassButton(if (soundOn) Icons.Rounded.MusicNote else Icons.Rounded.MusicOff, stringResource(R.string.ambience), { soundOn = !soundOn }, size = 44.dp)
+                    GlassButton(if (ambience != Ambience.NONE) Icons.Rounded.MusicNote else Icons.Rounded.MusicOff, stringResource(R.string.ambience), { picking = true }, size = 44.dp)
                     Spacer(Modifier.width(10.dp))
                     GlassButton(
                         if (voiceOn) Icons.Rounded.RecordVoiceOver else Icons.Rounded.VoiceOverOff, stringResource(R.string.voice),
@@ -303,6 +311,28 @@ private fun GuidedSession(g: Guided, visions: List<Vision>, ru: Boolean, setting
             }
         }
     }
+    if (picking) AmbiencePicker(g.id, g.ambience, settings) {
+        picking = false
+        if (stage != Stage.PLAYING) Soundscape.stop()
+    }
+}
+
+@Composable
+private fun AmbiencePicker(id: String, designed: Ambience?, settings: Settings, onDismiss: () -> Unit) {
+    val container = LocalContext.current.container
+    val custom = settings.ambienceFor(id)
+    AmbienceSheet(
+        designed = designed,
+        selected = custom ?: designed ?: Ambience.NONE,
+        custom = custom != null,
+        volume = settings.ambienceVolume,
+        onSelect = { a ->
+            if (a == Ambience.NONE) Soundscape.stop()
+            container.scope.launch { container.settings.update { it.withAmbience(id, a) } }
+        },
+        onVolume = { v -> container.scope.launch { container.settings.update { it.copy(ambienceVolume = v) } } },
+        onDismiss = onDismiss,
+    )
 }
 
 @Composable

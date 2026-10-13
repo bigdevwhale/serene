@@ -79,6 +79,7 @@
     <string name="kind_meditation">Медитация</string>
     <string name="kind_visualization">Визуализация</string>
     <string name="intro_hint">Найдите тихое место. В наушниках лучше.</string>
+    <string name="ambience_designed">Как задумано · %s</string>
     <string name="voice">Голос</string>
     <string name="ambience">Фоновый звук</string>
     <string name="voice_missing">На телефоне пока нет офлайн-голоса для этого языка, поэтому практика будет показана текстом. Голос можно установить в настройках синтеза речи.</string>

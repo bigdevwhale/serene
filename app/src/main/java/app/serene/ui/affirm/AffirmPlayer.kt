@@ -21,6 +21,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material.icons.rounded.MusicNote
+import androidx.compose.material.icons.rounded.MusicOff
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.RecordVoiceOver
@@ -53,6 +55,10 @@ import app.serene.content.Ambience
 import app.serene.data.Favorite
 import app.serene.data.PracticeKind
 import app.serene.data.Settings
+import app.serene.data.ambienceFor
+import app.serene.data.withAmbience
+import app.serene.ui.components.AmbienceSheet
+import kotlinx.coroutines.launch
 import app.serene.ui.components.GlassButton
 import app.serene.ui.components.KeepScreenOn
 import app.serene.ui.components.cardGradients
@@ -84,6 +90,7 @@ fun AffirmPlayer(setId: String, start: String, settings: Settings, onClose: () -
     // Autoplay starts by itself for the playlist, by tap for a single card.
     var auto by remember { mutableStateOf(start.isEmpty()) }
     var voiceOn by remember { mutableStateOf(settings.voice) }
+    var picking by remember { mutableStateOf(false) }
     var elapsed by remember { mutableIntStateOf(0) }
     val favorites by remember { container.db.dao().observeFavorites() }.collectAsStateWithLifecycle(initialValue = emptyList())
 
@@ -105,8 +112,9 @@ fun AffirmPlayer(setId: String, start: String, settings: Settings, onClose: () -
             elapsed++
         }
     }
-    LaunchedEffect(auto) {
-        if (auto) Soundscape.play(Ambience.DRONE, settings.ambienceVolume * 0.6f) else Soundscape.stop()
+    LaunchedEffect(auto, picking, settings.ambiences, settings.ambienceVolume) {
+        val a = settings.ambienceFor(AMBIENCE_ID) ?: Ambience.DRONE
+        if ((auto || picking) && a != Ambience.NONE) Soundscape.play(a, settings.ambienceVolume * 0.6f) else Soundscape.stop()
     }
     LaunchedEffect(auto, pager.currentPage, voiceOn) {
         if (!auto) {
@@ -138,6 +146,9 @@ fun AffirmPlayer(setId: String, start: String, settings: Settings, onClose: () -
             Row(Modifier.fillMaxWidth().padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 GlassButton(Icons.Rounded.Close, stringResource(R.string.close), { close() }, size = 44.dp)
                 Spacer(Modifier.weight(1f))
+                val amb = settings.ambienceFor(AMBIENCE_ID) ?: Ambience.DRONE
+                GlassButton(if (amb != Ambience.NONE) Icons.Rounded.MusicNote else Icons.Rounded.MusicOff, stringResource(R.string.ambience), { picking = true }, size = 44.dp)
+                Spacer(Modifier.width(14.dp))
                 Text("${pager.currentPage + 1} / ${items.size}", color = Color.White.copy(alpha = 0.8f), fontFamily = Inter, fontSize = 14.sp)
             }
             Spacer(Modifier.weight(1f))
@@ -168,4 +179,20 @@ fun AffirmPlayer(setId: String, start: String, settings: Settings, onClose: () -
             Spacer(Modifier.height(8.dp))
         }
     }
+
+    if (picking) {
+        val custom = settings.ambienceFor(AMBIENCE_ID)
+        AmbienceSheet(
+            designed = Ambience.DRONE,
+            selected = custom ?: Ambience.DRONE,
+            custom = custom != null,
+            volume = settings.ambienceVolume,
+            onSelect = { a -> container.scope.launch { container.settings.update { it.withAmbience(AMBIENCE_ID, a) } } },
+            onVolume = { v -> container.scope.launch { container.settings.update { it.copy(ambienceVolume = v) } } },
+            onDismiss = { picking = false },
+        )
+    }
 }
+
+/** Affirmation playlists share one background sound choice. */
+private const val AMBIENCE_ID = "affirmations"

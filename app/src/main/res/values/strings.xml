@@ -73,6 +73,7 @@
     <string name="kind_meditation">Meditation</string>
     <string name="kind_visualization">Visualization</string>
     <string name="intro_hint">Find a quiet spot. Headphones help.</string>
+    <string name="ambience_designed">As designed · %s</string>
     <string name="voice">Voice</string>
     <string name="ambience">Background sound</string>
     <string name="voice_missing">There is no offline voice for this language on your phone yet, so the session will be shown as text. You can install one in the speech settings.</string>
