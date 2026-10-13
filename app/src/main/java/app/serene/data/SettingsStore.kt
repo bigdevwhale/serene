@@ -35,7 +35,7 @@ data class Settings(
     /** Background sound chosen per session, overriding the one it was written for: "body_scan=RAIN;…". */
     val ambiences: String = "",
     /** 0..1, background sound level during sessions. */
-    val ambienceVolume: Float = 0.6f,
+    val ambienceVolume: Float = 0.45f,
     val bells: Boolean = true,
     val haptics: Boolean = true,
     val dailyGoal: Int = 10,
@@ -82,7 +82,7 @@ class SettingsStore(context: Context) {
         studioVoice = this[STUDIO_VOICE] ?: true,
         voices = this[VOICES] ?: "",
         ambiences = this[AMBIENCES] ?: "",
-        ambienceVolume = this[AMBIENCE_VOLUME] ?: 0.6f,
+        ambienceVolume = this[AMBIENCE_VOLUME] ?: 0.45f,
         bells = this[BELLS] ?: true,
         haptics = this[HAPTICS] ?: true,
         dailyGoal = this[DAILY_GOAL] ?: 10,

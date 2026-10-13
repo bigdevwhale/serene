@@ -94,7 +94,16 @@
     <string name="amb_ocean">Ocean</string>
     <string name="amb_stream">Stream</string>
     <string name="amb_wind">Wind</string>
-    <string name="amb_forest">Forest</string>
+    <string name="amb_music">Soft music</string>
+    <string name="amb_forest">Forest birds</string>
+    <string name="amb_night">Summer night</string>
+    <string name="amb_storm">Thunderstorm</string>
+    <string name="amb_boat">Boat</string>
+    <string name="amb_city">City</string>
+    <string name="amb_cafe">Café</string>
+    <string name="amb_train">Train</string>
+    <string name="amb_white">White noise</string>
+    <string name="amb_pink">Pink noise</string>
     <string name="amb_fire">Fireplace</string>
     <string name="amb_drone">Warm tone</string>
     <string name="amb_brown">Deep noise</string>
@@ -286,7 +295,7 @@
     <string name="backup_failed">Something went wrong</string>
     <string name="backup_restored">Restored</string>
     <string name="about">About</string>
-    <string name="about_text">Serene is free and open source, with no ads, no account and no tracking. Voices and sounds are made on your phone, so it works offline.</string>
+    <string name="about_text">Serene is free and open source, with no ads, no account and no tracking. Everything works offline. Narration: Silero TTS and Kokoro. Soundscapes: recordings from the Blanket project by alex36917, Digifish music, Luftrum, gezortenplotz, SDLx, Jorge Stolfi, Omegatron and others (CC BY, CC0, public domain); full credits in the project README.</string>
     <string name="about_version">Version %s</string>
 
     <!-- Notifications and widget -->

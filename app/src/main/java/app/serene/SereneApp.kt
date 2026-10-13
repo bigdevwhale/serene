@@ -69,6 +69,7 @@ class SereneApp : Application() {
         container = AppContainer(this)
         app.serene.content.Spoken.lookup = { text, ru -> container.narrator.seconds(text, if (ru) "ru" else "en") }
         Reminders.ensureChannel(this)
+        app.serene.audio.Soundscape.init(this)
         // Re-arm on every start: OEM task killers (HyperOS & co.) silently drop alarms.
         container.scope.launch {
             if (BuildConfig.DEMO) DemoSeed.seedIfEmpty(this@SereneApp, container.db, container.settings)

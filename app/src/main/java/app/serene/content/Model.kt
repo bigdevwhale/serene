@@ -5,8 +5,16 @@ enum class GuidedKind { MEDITATION, VISUALIZATION }
 /** The colours and drifting shapes behind a session. */
 enum class Scene { DAWN, OCEAN, FOREST, NIGHT, MOUNTAIN, MEADOW, LIGHT, SPACE }
 
-/** Background sound, synthesised on the device (see app.serene.audio.Soundscape). */
-enum class Ambience { NONE, RAIN, OCEAN, STREAM, WIND, FOREST, FIRE, DRONE, BROWN }
+/**
+ * Background sound. Nature and places are recordings (assets/ambience/<file>.ogg, from Blanket);
+ * music, the warm tone and deep noise are synthesised on the device (see app.serene.audio).
+ */
+enum class Ambience(val file: String? = null) {
+    NONE,
+    RAIN("rain"), STORM("storm"), OCEAN("ocean"), STREAM("stream"), WIND("wind"), FOREST("forest"), NIGHT("night"),
+    FIRE("fire"), BOAT("boat"), CITY("city"), CAFE("cafe"), TRAIN("train"), WHITE("white"), PINK("pink"),
+    MUSIC, DRONE, BROWN,
+}
 
 /**
  * One spoken line of a guided session, then [pause] seconds of quiet. [tag] marks which vision

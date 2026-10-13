@@ -72,7 +72,10 @@ import kotlinx.coroutines.launch
 
 fun sceneFor(a: Ambience): Scene = when (a) {
     Ambience.OCEAN -> Scene.OCEAN
-    Ambience.FOREST, Ambience.STREAM -> Scene.FOREST
+    Ambience.STREAM, Ambience.FOREST -> Scene.FOREST
+    Ambience.MUSIC, Ambience.BOAT -> Scene.MEADOW
+    Ambience.NIGHT, Ambience.STORM, Ambience.CITY, Ambience.TRAIN, Ambience.CAFE -> Scene.NIGHT
+    Ambience.WHITE, Ambience.PINK -> Scene.SPACE
     Ambience.WIND -> Scene.MOUNTAIN
     Ambience.DRONE -> Scene.LIGHT
     Ambience.BROWN -> Scene.SPACE

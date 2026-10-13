@@ -1,5 +1,6 @@
 package app.serene.audio
 
+import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioFormat
 import android.media.AudioTrack
@@ -12,8 +13,9 @@ import kotlin.math.tanh
 import kotlin.random.Random
 
 /**
- * Endless background sound, synthesised on the fly from filtered noise and sine waves.
- * Nothing loops, so there is no seam to notice after ten minutes; no audio files ship with the app.
+ * Endless background sound. Recordings are decoded once and played as shuffled segments that
+ * crossfade into each other, so even a short file never audibly loops; music, the warm tone and
+ * deep noise are synthesised on the fly. One mixer handles fades, volume and ducking for both.
  */
 object Soundscape {
     const val RATE = 32000
@@ -22,6 +24,11 @@ object Soundscape {
     @Volatile private var worker: Worker? = null
     @Volatile private var volume = 0.6f
     @Volatile private var duck = 1f
+    private lateinit var app: Context
+
+    fun init(context: Context) {
+        app = context.applicationContext
+    }
 
     val playing: Ambience? get() = worker?.takeIf { !it.stopping }?.ambience
 
@@ -37,9 +44,9 @@ object Soundscape {
         volume = v
     }
 
-    /** Softer while the voice speaks, so words stay clear over the ocean. */
+    /** Much softer while the voice speaks, so every word stays clear over the ocean. */
     fun duck(on: Boolean) {
-        duck = if (on) 0.55f else 1f
+        duck = if (on) 0.2f else 1f
     }
 
     fun stop() {
@@ -61,7 +68,12 @@ object Soundscape {
                     .setTransferMode(AudioTrack.MODE_STREAM)
                     .build()
             }.getOrNull() ?: return
-            val gen = Generators.of(ambience, Random(System.nanoTime()))
+            val rnd = Random(System.nanoTime())
+            val gen = ambience.file?.let { f -> Recording.load(app, f)?.let { Recording.endless(it, rnd) } } ?: Generators.of(ambience, rnd)
+            if (stopping) {
+                track.release()
+                return
+            }
             val buf = ShortArray(CHUNK)
             var fade = 0f
             var level = volume * duck
@@ -73,7 +85,8 @@ object Soundscape {
                     for (i in 0 until CHUNK) {
                         fade = (fade + fadeStep).coerceIn(0f, 1f)
                         // Glide toward the target level so ducking never clicks.
-                        level += (target - level) * 0.0004f
+                        // About 60 ms down when the voice starts, a slower 0.4 s swell back after it.
+                        level += (target - level) * (if (target < level) 0.0005f else 0.00008f)
                         val x = tanh(gen.next() * 1.2f) * fade * level
                         buf[i] = (x * 0.85f * Short.MAX_VALUE).toInt().toShort()
                     }
@@ -99,15 +112,11 @@ object Generators {
     private fun coef(hz: Float) = 1f - exp(-2f * PI.toFloat() * hz / R)
 
     fun of(a: Ambience, rnd: Random): Gen = when (a) {
-        Ambience.NONE -> Gen { 0f }
         Ambience.BROWN -> brown(rnd).lowpass(900f).gain(1.1f)
-        Ambience.RAIN -> rain(rnd).gain(0.85f)
-        Ambience.OCEAN -> ocean(rnd).gain(0.55f)
-        Ambience.STREAM -> stream(rnd).gain(0.6f)
-        Ambience.WIND -> wind(rnd).gain(1.4f)
-        Ambience.FOREST -> forest(rnd).gain(1.7f)
-        Ambience.FIRE -> fire(rnd)
+        Ambience.MUSIC -> music(rnd)
         Ambience.DRONE -> drone(rnd).gain(0.85f)
+        // Recordings are decoded by Soundscape; silence stands in if one cannot be.
+        else -> Gen { 0f }
     }
 
     fun white(rnd: Random) = Gen { rnd.nextFloat() * 2 - 1 }
@@ -164,178 +173,76 @@ object Generators {
         }
     }
 
-    /** Short decaying sine pings: raindrops, bubbles, crackles. */
-    private class Pings(private val max: Int) {
-        private val phase = FloatArray(max)
-        private val step = FloatArray(max)
-        private val sweep = FloatArray(max)
-        private val amp = FloatArray(max)
-        private val decay = FloatArray(max)
-        private var n = 0
-
-        fun add(hz: Float, amplitude: Float, ms: Float, sweepTo: Float = hz) {
+    /**
+     * Gentle generative music: unhurried notes from a pentatonic scale, so no two ever clash,
+     * each a soft bell-like tone with a long fade, over a quiet pad and a little echo for space.
+     */
+    private fun music(rnd: Random): Gen {
+        // A minor pentatonic across two octaves.
+        val scale = floatArrayOf(220f, 261.63f, 293.66f, 329.63f, 392f, 440f, 523.25f, 587.33f, 659.26f, 783.99f)
+        val max = 10
+        val ph = FloatArray(max * 3)
+        val step = FloatArray(max * 3)
+        val amp = FloatArray(max)
+        val dec = FloatArray(max)
+        val age = IntArray(max)
+        var n = 0
+        var wait = (R * 0.5f).toInt()
+        var last = 4
+        val parts = floatArrayOf(1f, 2f, 3.01f)
+        val partAmp = floatArrayOf(1f, 0.32f, 0.1f)
+        fun note(i: Int, a: Float) {
             if (n == max) return
-            phase[n] = 0f
-            step[n] = 2f * PI.toFloat() * hz / R
-            val samples = ms / 1000f * R
-            // Glide in frequency over the ping's life (bubbles rise).
-            sweep[n] = Math.pow((sweepTo / hz).toDouble(), 1.0 / samples).toFloat()
-            amp[n] = amplitude
-            decay[n] = exp(-5f / samples)
+            for (p in 0 until 3) {
+                ph[n * 3 + p] = 0f
+                step[n * 3 + p] = 2f * PI.toFloat() * scale[i] * parts[p] / R
+            }
+            amp[n] = a
+            dec[n] = exp(-1f / (R * (2.2f + rnd.nextFloat() * 1.6f)))
+            age[n] = 0
             n++
         }
-
-        fun next(): Float {
-            var out = 0f
-            var i = 0
-            while (i < n) {
-                out += sin(phase[i]) * amp[i]
-                phase[i] += step[i]
-                step[i] *= sweep[i]
-                amp[i] *= decay[i]
-                if (amp[i] < 0.0005f) {
-                    n--
-                    phase[i] = phase[n]; step[i] = step[n]; sweep[i] = sweep[n]; amp[i] = amp[n]; decay[i] = decay[n]
-                } else i++
+        val pad = drone(rnd)
+        // Two feedback delays, darkened: a small, soft room.
+        val d1 = FloatArray((R * 0.37f).toInt())
+        val d2 = FloatArray((R * 0.53f).toInt())
+        var i1 = 0
+        var i2 = 0
+        var lp = 0f
+        return Gen {
+            if (--wait <= 0) {
+                // A melody that mostly steps, sometimes leaps, with an occasional soft second voice.
+                last = (last + rnd.nextInt(-2, 3)).coerceIn(0, scale.size - 1)
+                note(last, 0.1f + rnd.nextFloat() * 0.08f)
+                if (rnd.nextFloat() < 0.25f) note((last - 2).coerceAtLeast(0), 0.06f)
+                wait = ((0.9f + rnd.nextFloat() * 2.4f) * R).toInt()
             }
-            return out
-        }
-    }
-
-    private fun rain(rnd: Random): Gen {
-        val hiss = pink(rnd).highpass(500f).lowpass(7000f)
-        val body = brown(rnd).lowpass(300f)
-        val drops = Pings(24)
-        val heavy = Drift(rnd, 4f, 9f, 0.3f)
-        return Gen {
-            val h = heavy.next()
-            if (rnd.nextFloat() < (25f + 50f * h) / R) {
-                drops.add(1800f + rnd.nextFloat() * 3800f, 0.04f + rnd.nextFloat().let { it * it } * 0.22f, 6f + rnd.nextFloat() * 18f, 1400f + rnd.nextFloat() * 1500f)
-            }
-            hiss.next() * (0.8f + 0.35f * h) + body.next() * 0.35f + drops.next()
-        }
-    }
-
-    private fun ocean(rnd: Random): Gen {
-        val src = pink(rnd)
-        val rumble = brown(rnd).lowpass(160f)
-        var y = 0f
-        var t = 0
-        var len = 1
-        var peak = 0.4f
-        return Gen {
-            if (++t >= len) {
-                t = 0
-                len = ((7f + rnd.nextFloat() * 5f) * R).toInt()
-                peak = 0.6f + rnd.nextFloat() * 0.4f
-            }
-            val p = t.toFloat() / len
-            // A wave gathers for 40% of its life, then breaks and drains away.
-            val e = if (p < 0.4f) (p / 0.4f).let { it * it * (3 - 2 * it) } * peak else peak * exp(-(p - 0.4f) * 5f)
-            val a = coef(250f + 2200f * e)
-            y += a * (src.next() - y)
-            y * (0.35f + 2.1f * e) + rumble.next() * 0.55f
-        }
-    }
-
-    private fun stream(rnd: Random): Gen {
-        val water = pink(rnd).highpass(350f).lowpass(3500f)
-        val ripple = Drift(rnd, 0.03f, 0.12f, 25f)
-        val bubbles = Pings(12)
-        return Gen {
-            if (rnd.nextFloat() < 14f / R) {
-                val f = 500f + rnd.nextFloat() * 900f
-                bubbles.add(f, 0.05f + rnd.nextFloat() * 0.08f, 25f + rnd.nextFloat() * 40f, f * 1.7f)
-            }
-            water.next() * (1.1f + 0.9f * ripple.next()) + bubbles.next()
-        }
-    }
-
-    /** Noise through a drifting resonant band-pass: gusts that rise and fall. */
-    private fun windGen(rnd: Random): Gen {
-        val noise = white(rnd)
-        val gust = Drift(rnd, 2f, 5f, 0.35f)
-        var low = 0f
-        var band = 0f
-        return Gen {
-            val g = gust.next()
-            val f = 2f * sin(PI.toFloat() * (180f + 650f * g) / R)
-            val q = 0.35f
-            low += f * band
-            val high = noise.next() * 0.6f - low - q * band
-            band += f * high
-            band * (0.25f + 0.9f * g)
-        }
-    }
-
-    private fun wind(rnd: Random): Gen {
-        val w = windGen(rnd)
-        val bed = brown(rnd).lowpass(220f)
-        return Gen { w.next() * 1.4f + bed.next() * 0.3f }
-    }
-
-    private fun forest(rnd: Random): Gen {
-        val w = windGen(rnd)
-        val leaves = pink(rnd).highpass(1500f)
-        val leafy = Drift(rnd, 1.5f, 4f, 0.6f)
-        // A bird phrase: a few chirps sweeping up or down, then a long silence.
-        var wait = (R * 2).toInt()
-        var chirpLeft = 0
-        var chirpLen = 1
-        var chirps = 0
-        var gap = 0
-        var phase = 0f
-        var f0 = 3000f
-        var f1 = 3600f
-        var amp = 0.15f
-        var vib = 0f
-        fun newChirp() {
-            chirpLen = ((0.05f + rnd.nextFloat() * 0.09f) * R).toInt()
-            chirpLeft = chirpLen
-            val up = rnd.nextBoolean()
-            val span = 0.2f + rnd.nextFloat() * 0.45f
-            f1 = if (up) f0 * (1 + span) else f0 * (1 - span * 0.5f)
-        }
-        return Gen {
-            var bird = 0f
-            if (chirpLeft > 0) {
-                val p = 1f - chirpLeft.toFloat() / chirpLen
-                val env = sin(PI.toFloat() * p).let { it * it }
-                vib += 2f * PI.toFloat() * 28f / R
-                val hz = (f0 + (f1 - f0) * p) * (1 + 0.025f * sin(vib))
-                phase += 2f * PI.toFloat() * hz / R
-                bird = sin(phase) * env * amp
-                if (--chirpLeft == 0) {
-                    gap = ((0.04f + rnd.nextFloat() * 0.12f) * R).toInt()
-                    chirps--
+            var x = 0f
+            var k = 0
+            while (k < n) {
+                val attack = minOf(1f, age[k] / (R * 0.012f))
+                var v = 0f
+                for (p in 0 until 3) {
+                    v += sin(ph[k * 3 + p]) * partAmp[p]
+                    ph[k * 3 + p] += step[k * 3 + p]
                 }
-            } else if (chirps > 0) {
-                if (--gap <= 0) newChirp()
-            } else if (--wait <= 0) {
-                wait = ((1.5f + rnd.nextFloat() * 5f) * R).toInt()
-                chirps = 2 + rnd.nextInt(5)
-                f0 = 2200f + rnd.nextFloat() * 2200f
-                amp = 0.06f + rnd.nextFloat() * 0.12f
-                newChirp()
+                x += v * amp[k] * attack
+                amp[k] *= dec[k]
+                age[k]++
+                if (amp[k] < 0.0004f) {
+                    n--
+                    for (p in 0 until 3) { ph[k * 3 + p] = ph[n * 3 + p]; step[k * 3 + p] = step[n * 3 + p] }
+                    amp[k] = amp[n]; dec[k] = dec[n]; age[k] = age[n]
+                } else k++
             }
-            w.next() * 0.7f + leaves.next() * 0.12f * leafy.next() + bird
-        }
-    }
-
-    private fun fire(rnd: Random): Gen {
-        val roar = brown(rnd).lowpass(700f)
-        val hiss = pink(rnd).highpass(2500f)
-        val flicker = Drift(rnd, 0.2f, 0.8f, 3f)
-        val crackle = white(rnd).highpass(1200f)
-        var burst = 0
-        var burstAmp = 0f
-        return Gen {
-            if (burst <= 0 && rnd.nextFloat() < 9f / R) {
-                burst = ((0.001f + rnd.nextFloat() * 0.005f) * R).toInt()
-                burstAmp = rnd.nextFloat().let { it * it * it } * 1.2f + 0.05f
-            }
-            val c = if (burst-- > 0) crackle.next() * burstAmp else 0f
-            roar.next() * (0.6f + 0.5f * flicker.next()) + hiss.next() * 0.08f + c * 1.3f
+            val e1 = d1[i1]
+            val e2 = d2[i2]
+            lp += 0.25f * ((e1 + e2) * 0.5f - lp)
+            d1[i1] = x + lp * 0.55f
+            d2[i2] = x + lp * 0.45f
+            i1 = (i1 + 1) % d1.size
+            i2 = (i2 + 1) % d2.size
+            (x + lp * 0.6f) * 1.6f + pad.next() * 0.18f
         }
     }
 

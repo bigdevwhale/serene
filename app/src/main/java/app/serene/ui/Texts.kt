@@ -135,7 +135,16 @@ fun ambienceLabel(a: Ambience): String = stringResource(
         Ambience.OCEAN -> R.string.amb_ocean
         Ambience.STREAM -> R.string.amb_stream
         Ambience.WIND -> R.string.amb_wind
+        Ambience.MUSIC -> R.string.amb_music
         Ambience.FOREST -> R.string.amb_forest
+        Ambience.NIGHT -> R.string.amb_night
+        Ambience.STORM -> R.string.amb_storm
+        Ambience.BOAT -> R.string.amb_boat
+        Ambience.CITY -> R.string.amb_city
+        Ambience.CAFE -> R.string.amb_cafe
+        Ambience.TRAIN -> R.string.amb_train
+        Ambience.WHITE -> R.string.amb_white
+        Ambience.PINK -> R.string.amb_pink
         Ambience.FIRE -> R.string.amb_fire
         Ambience.DRONE -> R.string.amb_drone
         Ambience.BROWN -> R.string.amb_brown

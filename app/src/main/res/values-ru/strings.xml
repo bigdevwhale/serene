@@ -100,7 +100,16 @@
     <string name="amb_ocean">Океан</string>
     <string name="amb_stream">Ручей</string>
     <string name="amb_wind">Ветер</string>
-    <string name="amb_forest">Лес</string>
+    <string name="amb_music">Мягкая музыка</string>
+    <string name="amb_forest">Лес и птицы</string>
+    <string name="amb_night">Летняя ночь</string>
+    <string name="amb_storm">Гроза</string>
+    <string name="amb_boat">Лодка</string>
+    <string name="amb_city">Город</string>
+    <string name="amb_cafe">Кафе</string>
+    <string name="amb_train">Поезд</string>
+    <string name="amb_white">Белый шум</string>
+    <string name="amb_pink">Розовый шум</string>
     <string name="amb_fire">Камин</string>
     <string name="amb_drone">Тёплый тон</string>
     <string name="amb_brown">Глубокий шум</string>
@@ -292,7 +301,7 @@
     <string name="backup_failed">Что-то пошло не так</string>
     <string name="backup_restored">Восстановлено</string>
     <string name="about">О приложении</string>
-    <string name="about_text">Serene — бесплатное приложение с открытым кодом, без рекламы, аккаунтов и слежки. Голос и звуки создаются прямо на телефоне, поэтому всё работает без интернета.</string>
+    <string name="about_text">Serene — бесплатное приложение с открытым кодом, без рекламы, аккаунтов и слежки. Всё работает без интернета. Озвучка: Silero TTS и Kokoro. Фоновые звуки: записи из проекта Blanket — авторы alex36917, Digifish music, Luftrum, gezortenplotz, SDLx, Jorge Stolfi, Omegatron и другие (CC BY, CC0, общественное достояние); полный список — в README проекта.</string>
     <string name="about_version">Версия %s</string>
 
     <!-- Notifications and widget -->

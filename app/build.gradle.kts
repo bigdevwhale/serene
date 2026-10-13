@@ -62,8 +62,8 @@ android {
     }
     androidResources {
         generateLocaleConfig = true
-        // Narration is already Opus; stored uncompressed it can be played straight from the APK.
-        noCompress += "webm"
+        // Narration and soundscapes are already compressed; stored as is they are read straight from the APK.
+        noCompress += listOf("webm", "ogg")
     }
     lint {
         error += "MissingTranslation"

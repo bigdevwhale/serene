@@ -20,7 +20,7 @@ class SoundTest {
     @Test
     fun `every soundscape has a calm, steady level`() {
         val dir = System.getProperty("preview")?.takeIf { it.isNotEmpty() }?.let(::File)?.apply { mkdirs() }
-        for (a in Ambience.entries - Ambience.NONE) {
+        for (a in Ambience.entries.filter { it != Ambience.NONE && it.file == null }) {
             val gen = Generators.of(a, Random(1))
             val n = Soundscape.RATE * 30
             val out = FloatArray(n) { tanh(gen.next() * 1.2f) }
