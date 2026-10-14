@@ -2,6 +2,8 @@ package app.serene.ui.affirm
 
 import android.content.Intent
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -116,19 +118,20 @@ fun AffirmPlayer(setId: String, start: String, settings: Settings, onClose: () -
         val a = settings.ambienceFor(AMBIENCE_ID) ?: Ambience.DRONE
         if ((auto || picking) && a != Ambience.NONE) Soundscape.play(a, settings.ambienceVolume * 0.6f) else Soundscape.stop()
     }
-    LaunchedEffect(auto, pager.currentPage, voiceOn) {
+    // Keyed on the settled page: currentPage flips halfway through the slide, which would cancel the scroll mid-way.
+    LaunchedEffect(auto, pager.settledPage, voiceOn) {
         if (!auto) {
             container.stopSpeaking()
             return@LaunchedEffect
         }
         delay(700)
-        val a = items[pager.currentPage]
+        val a = items[pager.settledPage]
         Soundscape.duck(voiceOn)
         val heard = voiceOn && container.speak(a.text, settings, if (lib.ru) "ru" else "en", a.audio)
         Soundscape.duck(false)
         // Room to say it back.
         if (heard) delay(5500) else delay(4000L + a.text.split(' ').size * 450L)
-        if (pager.currentPage < items.size - 1) pager.animateScrollToPage(pager.currentPage + 1)
+        if (pager.settledPage < items.size - 1) pager.animateScrollToPage(pager.settledPage + 1, animationSpec = tween(1100, easing = FastOutSlowInEasing))
         else auto = false
     }
 
