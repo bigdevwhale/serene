@@ -1,6 +1,10 @@
 package app.serene.ui.components
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.media.AudioManager
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.compose.foundation.background
@@ -11,11 +15,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -38,6 +44,23 @@ fun KeepScreenOn(on: Boolean = true) {
     DisposableEffect(on) {
         view.keepScreenOn = on
         onDispose { view.keepScreenOn = false }
+    }
+}
+
+/** Calls [onNoisy] when headphones are unplugged or Bluetooth drops, so the session pauses instead of playing out loud. */
+@Composable
+fun PauseOnUnplug(onNoisy: () -> Unit) {
+    val context = LocalContext.current
+    val latest = rememberUpdatedState(onNoisy)
+    DisposableEffect(context) {
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(c: Context, i: Intent) {
+                if (i.action == AudioManager.ACTION_AUDIO_BECOMING_NOISY) latest.value()
+            }
+        }
+        // A protected system broadcast, so it reaches a receiver that is not exported.
+        context.registerReceiver(receiver, IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY), Context.RECEIVER_NOT_EXPORTED)
+        onDispose { runCatching { context.unregisterReceiver(receiver) } }
     }
 }
 

@@ -62,6 +62,7 @@ import app.serene.ui.ambienceLabel
 import app.serene.ui.clock
 import app.serene.ui.components.GlassButton
 import app.serene.ui.components.KeepScreenOn
+import app.serene.ui.components.PauseOnUnplug
 import app.serene.ui.components.SceneBackdrop
 import app.serene.ui.components.logSession
 import app.serene.ui.minutesLabel
@@ -103,6 +104,7 @@ fun TimerScreen(settings: Settings, onClose: () -> Unit) {
     }
     BackHandler { close() }
     KeepScreenOn(running && !paused)
+    PauseOnUnplug { if (running) paused = true }
     LaunchedEffect(Unit) { Chimes.prepare(Chime.BOWL, Chime.GONG) }
     DisposableEffect(Unit) { onDispose { Soundscape.stop() } }
 

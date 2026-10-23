@@ -39,6 +39,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -63,6 +64,7 @@ import app.serene.ui.components.AmbienceSheet
 import kotlinx.coroutines.launch
 import app.serene.ui.components.GlassButton
 import app.serene.ui.components.KeepScreenOn
+import app.serene.ui.components.PauseOnUnplug
 import app.serene.ui.components.cardGradients
 import app.serene.ui.components.logSession
 import app.serene.ui.library
@@ -70,6 +72,7 @@ import app.serene.ui.locale
 import app.serene.ui.theme.Inter
 import app.serene.ui.theme.Lora
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 
 /** One affirmation per screen. In autoplay the voice says it, then leaves room to repeat it aloud. */
 @Composable
@@ -91,6 +94,8 @@ fun AffirmPlayer(setId: String, start: String, settings: Settings, onClose: () -
     val pager = rememberPagerState(first) { items.size }
     // Autoplay starts by itself for the playlist, by tap for a single card.
     var auto by remember { mutableStateOf(start.isEmpty()) }
+    // The card being said. Autoplay moves it without waiting for the pager, which stands still while the screen is off.
+    var current by remember { mutableIntStateOf(first) }
     var voiceOn by remember { mutableStateOf(settings.voice) }
     var picking by remember { mutableStateOf(false) }
     var elapsed by remember { mutableIntStateOf(0) }
@@ -102,6 +107,7 @@ fun AffirmPlayer(setId: String, start: String, settings: Settings, onClose: () -
     }
     BackHandler { close() }
     KeepScreenOn(auto)
+    PauseOnUnplug { auto = false }
     DisposableEffect(Unit) {
         onDispose {
             container.stopSpeaking()
@@ -118,21 +124,28 @@ fun AffirmPlayer(setId: String, start: String, settings: Settings, onClose: () -
         val a = settings.ambienceFor(AMBIENCE_ID) ?: Ambience.DRONE
         if ((auto || picking) && a != Ambience.NONE) Soundscape.play(a, settings.ambienceVolume * 0.6f) else Soundscape.stop()
     }
-    // Keyed on the settled page: currentPage flips halfway through the slide, which would cancel the scroll mid-way.
-    LaunchedEffect(auto, pager.settledPage, voiceOn) {
+    // A swipe by hand picks the card. Keyed on the settled page: currentPage flips halfway through the slide.
+    LaunchedEffect(pager.settledPage) { current = pager.settledPage }
+    // The pager catches up with autoplay; after the screen was off it slides straight to the card being said.
+    LaunchedEffect(current) {
+        if (pager.settledPage != current) pager.animateScrollToPage(current, animationSpec = tween(1100, easing = FastOutSlowInEasing))
+    }
+    // Runs on delays only, never on frames, so it keeps going with the screen locked.
+    LaunchedEffect(auto, voiceOn) {
         if (!auto) {
             container.stopSpeaking()
             return@LaunchedEffect
         }
-        delay(700)
-        val a = items[pager.settledPage]
-        Soundscape.duck(voiceOn)
-        val heard = voiceOn && container.speak(a.text, settings, if (lib.ru) "ru" else "en", a.audio)
-        Soundscape.duck(false)
-        // Room to say it back.
-        if (heard) delay(5500) else delay(4000L + a.text.split(' ').size * 450L)
-        if (pager.settledPage < items.size - 1) pager.animateScrollToPage(pager.settledPage + 1, animationSpec = tween(1100, easing = FastOutSlowInEasing))
-        else auto = false
+        snapshotFlow { current }.collectLatest { i ->
+            delay(700)
+            val a = items[i]
+            Soundscape.duck(voiceOn)
+            val heard = voiceOn && container.speak(a.text, settings, if (lib.ru) "ru" else "en", a.audio)
+            Soundscape.duck(false)
+            // Room to say it back.
+            if (heard) delay(5500) else delay(4000L + a.text.split(' ').size * 450L)
+            if (i < items.size - 1) current = i + 1 else auto = false
+        }
     }
 
     val brush = Brush.linearGradient(cardGradients[gradientIndex(setId, lib)].let { listOf(it[0], it[1], Color(0xFF2B2550)) })

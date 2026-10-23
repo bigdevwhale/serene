@@ -9,8 +9,11 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -54,6 +58,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -86,6 +91,7 @@ import kotlinx.coroutines.launch
 import app.serene.ui.clock
 import app.serene.ui.components.GlassButton
 import app.serene.ui.components.KeepScreenOn
+import app.serene.ui.components.PauseOnUnplug
 import app.serene.ui.components.SceneBackdrop
 import app.serene.ui.components.logSession
 import app.serene.ui.library
@@ -153,6 +159,12 @@ private fun GuidedSession(g: Guided, visions: List<Vision>, ru: Boolean, setting
     BackHandler { finishEarly() }
 
     KeepScreenOn(stage == Stage.PLAYING && !paused)
+    fun pause(on: Boolean) {
+        paused = on
+        if (on) container.stopSpeaking()
+        Soundscape.duck(on)
+    }
+    PauseOnUnplug { if (stage == Stage.PLAYING && !paused) pause(true) }
     LaunchedEffect(Unit) { Chimes.prepare(Chime.BOWL, Chime.GONG) }
     DisposableEffect(Unit) {
         onDispose {
@@ -216,6 +228,15 @@ private fun GuidedSession(g: Guided, visions: List<Vision>, ru: Boolean, setting
         jump++
     }
 
+    /** Starts the line that covers [fraction] of the session's estimated length. */
+    fun seekTo(fraction: Float) {
+        val target = fraction * total
+        var end = 0f
+        val i = estimates.indexOfFirst { end += it; end > target }
+        restartAt(if (i < 0) g.steps.size - 1 else i)
+    }
+
+    var scrub by remember { mutableStateOf<Float?>(null) }
     val step = g.steps.getOrNull(index)
     val vision = step?.tag?.let { visions.getOrNull(it) }
 
@@ -268,19 +289,12 @@ private fun GuidedSession(g: Guided, visions: List<Vision>, ru: Boolean, setting
             }
 
             if (stage == Stage.PLAYING) {
-                LinearProgressIndicator(
-                    progress = { progress },
-                    modifier = Modifier.fillMaxWidth().height(4.dp).clip(CircleShape),
-                    color = Color.White,
-                    trackColor = Color.White.copy(alpha = 0.2f),
-                    strokeCap = StrokeCap.Round,
-                    gapSize = 0.dp,
-                    drawStopIndicator = {},
-                )
-                Row(Modifier.fillMaxWidth().padding(top = 8.dp)) {
+                SeekBar(progress, onSeek = ::seekTo) { scrub = it }
+                Row(Modifier.fillMaxWidth().padding(top = 2.dp)) {
                     Text(clock(elapsed), color = Color.White.copy(alpha = 0.7f), fontFamily = Inter, fontSize = 13.sp)
                     Spacer(Modifier.weight(1f))
-                    Text("−" + clock(maxOf(0, (total - before - inStep).toInt())), color = Color.White.copy(alpha = 0.7f), fontFamily = Inter, fontSize = 13.sp)
+                    val left = scrub?.let { total * (1f - it) } ?: (total - before - inStep)
+                    Text("−" + clock(maxOf(0, left.toInt())), color = Color.White.copy(alpha = 0.7f), fontFamily = Inter, fontSize = 13.sp)
                 }
                 Row(
                     Modifier.fillMaxWidth().padding(top = 14.dp, bottom = 22.dp),
@@ -291,13 +305,7 @@ private fun GuidedSession(g: Guided, visions: List<Vision>, ru: Boolean, setting
                     Spacer(Modifier.width(28.dp))
                     GlassButton(
                         if (paused) Icons.Rounded.PlayArrow else Icons.Rounded.Pause, stringResource(if (paused) R.string.resume else R.string.pause),
-                        {
-                            paused = !paused
-                            if (paused) {
-                                container.stopSpeaking()
-                                Soundscape.duck(true)
-                            } else Soundscape.duck(false)
-                        },
+                        { pause(!paused) },
                         size = 72.dp, strong = true,
                     )
                     Spacer(Modifier.width(28.dp))
@@ -314,6 +322,42 @@ private fun GuidedSession(g: Guided, visions: List<Vision>, ru: Boolean, setting
     if (picking) AmbiencePicker(g.id, g.ambience, settings) {
         picking = false
         if (stage != Stage.PLAYING) Soundscape.stop()
+    }
+}
+
+/** The session's progress line; tap or drag it to jump to another part. Reports the dragged position through [onScrub], null when let go. */
+@Composable
+private fun SeekBar(progress: Float, onSeek: (Float) -> Unit, onScrub: (Float?) -> Unit) {
+    var drag by remember { mutableStateOf<Float?>(null) }
+    val shown = drag ?: progress
+    BoxWithConstraints(
+        Modifier
+            .fillMaxWidth()
+            .height(32.dp)
+            .pointerInput(Unit) {
+                detectTapGestures { onSeek((it.x / size.width).coerceIn(0f, 1f)) }
+            }
+            .pointerInput(Unit) {
+                fun at(x: Float) = (x / size.width).coerceIn(0f, 1f)
+                detectHorizontalDragGestures(
+                    onDragStart = { drag = at(it.x); onScrub(drag) },
+                    onDragEnd = { drag?.let(onSeek); drag = null; onScrub(null) },
+                    onDragCancel = { drag = null; onScrub(null) },
+                ) { change, _ -> drag = at(change.position.x); onScrub(drag) }
+            },
+        contentAlignment = Alignment.CenterStart,
+    ) {
+        LinearProgressIndicator(
+            progress = { shown },
+            modifier = Modifier.fillMaxWidth().height(4.dp).clip(CircleShape),
+            color = Color.White,
+            trackColor = Color.White.copy(alpha = 0.2f),
+            strokeCap = StrokeCap.Round,
+            gapSize = 0.dp,
+            drawStopIndicator = {},
+        )
+        val thumb = if (drag != null) 18.dp else 12.dp
+        Box(Modifier.offset(x = maxWidth * shown - thumb / 2).size(thumb).clip(CircleShape).background(Color.White))
     }
 }
 
