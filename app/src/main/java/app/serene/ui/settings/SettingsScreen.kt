@@ -62,6 +62,7 @@ import app.serene.notify.Reminders
 import app.serene.ui.Language
 import app.serene.ui.clockTime
 import app.serene.ui.components.Chip
+import app.serene.ui.components.CommunityLinks
 import app.serene.ui.components.ConfirmDialog
 import app.serene.ui.components.SectionTitle
 import app.serene.ui.components.TimeDialog
@@ -253,6 +254,8 @@ fun SettingsScreen(settings: Settings, onBack: () -> Unit) {
                     }
                 }
             }
+
+            CommunityLinks()
 
             SectionTitle(stringResource(R.string.about))
             UCard {
